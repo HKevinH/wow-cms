@@ -51,6 +51,7 @@ WOWCMS_TEST_AUTH_URL="mysql://root:root@127.0.0.1:3306/auth" pnpm test
 | `packages/module-sdk` | The public module contract. |
 | `packages/core-adapters` | One adapter per emulator family. |
 | `modules/*` | Features, each written against the SDK. |
+| `tools/*` | Offline tooling. Nothing running depends on it. |
 
 Two rules hold the design up:
 
@@ -62,6 +63,15 @@ override. A patched schema needs a config edit, not a fork.
 **No module reaches the emulator directly.** Modules receive an adapter. That is
 what makes support for another core a new package rather than an audit of every
 module.
+
+## Item models
+
+Store items can be shown as the 3D model the game uses. The art is converted
+ahead of time by `tools/model-pipeline`, which reads the client's archives and
+writes `.glb` files into `apps/web/public/models`. The site serves those as
+static files: no game data reaches production, and an item without a model —
+including every piece of body armour, which has none to begin with — keeps
+showing its 2D icon. See that package's README for how to run it.
 
 ## Themes
 

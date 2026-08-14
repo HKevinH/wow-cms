@@ -1,0 +1,122 @@
+---
+/** Shows an item's 3D model, or its icon when there is no model to show.
+ *
+ *  Whether a model exists is decided on the server from the pipeline's
+ *  manifest, so the icon never flashes and no request is made that 404s.
+ *  Callers pass what they have and get whichever is available. */
+interface Props {
+  /** URL of the item's model, or undefined when it has none to show. */
+  readonly modelUrl: string | undefined;
+  readonly iconUrl: string;
+  readonly name: string;
+  readonly hint: string;
+  readonly label: string;
+}
+
+const { modelUrl, iconUrl, name, hint, label } = Astro.props;
+---
+
+{
+  modelUrl ? (
+    <figure class="item-model" data-model={modelUrl}>
+      {/* The icon sits underneath as the poster, and stays put if WebGL,
+          the network or the file itself lets us down. */}
+      {iconUrl && <img src={iconUrl} alt="" class="item-model__poster" />}
+      <canvas class="item-model__canvas" tabindex="0" role="img" aria-label={label.replace('{name}', name)} />
+      <figcaption class="item-model__hint">{hint}</figcaption>
+    </figure>
+  ) : (
+    iconUrl && <img src={iconUrl} alt="" class="item-model__icon" />
+  )
+}
+
+<style>
+  .item-model {
+    position: relative;
+    display: grid;
+    margin: 0;
+    aspect-ratio: 1;
+    border-radius: var(--radius, 0.5rem);
+    background: radial-gradient(circle at 50% 42%, #221a2c 0%, #141019 68%);
+    overflow: hidden;
+  }
+
+  .item-model__poster,
+  .item-model__canvas {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+  }
+
+  .item-model__poster {
+    object-fit: contain;
+    padding: 22%;
+    opacity: 0.55;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Once the model is drawing, the poster underneath it only adds noise. */
+  .item-model[data-ready] .item-model__poster {
+    opacity: 0;
+  }
+
+  .item-model__canvas {
+    display: block;
+    cursor: grab;
+    touch-action: none;
+  }
+  .item-model__canvas:active {
+    cursor: grabbing;
+  }
+
+  .item-model__hint {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    color: #8b7f99;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .item-model[data-ready] .item-model__hint {
+    opacity: 1;
+  }
+  .item-model[data-failed] .item-model__hint {
+    display: none;
+  }
+
+  .item-model__icon {
+    height: 4rem;
+    width: 4rem;
+    object-fit: contain;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .item-model__poster,
+    .item-model__hint {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { mountItemModel } from '../lib/itemModelViewer';
+
+  for (const figure of document.querySelectorAll<HTMLElement>('.item-model[data-model]')) {
+    const canvas = figure.querySelector('canvas');
+    const url = figure.dataset.model;
+    if (!canvas || !url) continue;
+
+    void mountItemModel(canvas, url).then(
+      () => figure.setAttribute('data-ready', ''),
+      () => {
+        // The poster is already on screen, so failing back to it costs
+        // nothing but the canvas, which would otherwise sit there blank.
+        figure.setAttribute('data-failed', '');
+        canvas.remove();
+      },
+    );
+  }
+</script>

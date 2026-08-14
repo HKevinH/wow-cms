@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["apps", "packages", "modules"]
+  "include": ["apps", "packages", "modules", "tools"]
 }

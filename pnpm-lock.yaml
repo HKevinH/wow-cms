@@ -277,6 +277,12 @@ importers:
         specifier: ^3.11.0
         version: 3.23.3(@types/node@26.2.0)
 
+  tools/model-pipeline:
+    devDependencies:
+      tsx:
+        specifier: ^4.19.0
+        version: 4.23.12
+
 packages:
 
   '@alloc/quick-lru@5.2.0':

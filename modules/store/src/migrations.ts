@@ -11,4 +11,15 @@ export const storeMigrations: readonly Migration[] = [
       `CREATE TABLE IF NOT EXISTS store_item (id INT UNSIGNED NOT NULL AUTO_INCREMENT, realm_id INT UNSIGNED NULL, item_id INT UNSIGNED NOT NULL, name VARCHAR(160) NOT NULL, description TEXT NOT NULL, icon_url VARCHAR(500) NOT NULL DEFAULT '', category VARCHAR(80) NOT NULL DEFAULT '', price_donor_points INT UNSIGNED NOT NULL DEFAULT 0, price_vote_points INT UNSIGNED NOT NULL DEFAULT 0, details_json JSON NULL, enabled TINYINT(1) NOT NULL DEFAULT 1, PRIMARY KEY (id), KEY idx_store_item_enabled (enabled)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
     ],
   },
+  {
+    version: 2,
+    name: "store-item-display",
+    statements: [
+      // Zero means "no display known". Items published before this migration
+      // keep it and fall back to their 2D icon, which is also what an item
+      // whose art the pipeline cannot reach ends up doing.
+      `ALTER TABLE store_item ADD COLUMN display_id INT UNSIGNED NOT NULL DEFAULT 0`,
+      `ALTER TABLE store_item ADD COLUMN inventory_type TINYINT UNSIGNED NOT NULL DEFAULT 0`,
+    ],
+  },
 ];

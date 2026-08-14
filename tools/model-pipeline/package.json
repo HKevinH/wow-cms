@@ -1,0 +1,15 @@
+{
+  "name": "@wowcms/model-pipeline",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "//models": "tsx applies one tsconfig to every file it loads, and this tool is run from the repository root, so it is given the root one — the same reasoning as the API's dev script",
+    "models": "tsx --tsconfig ../../tsconfig.json src/cli.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0"
+  }
+}

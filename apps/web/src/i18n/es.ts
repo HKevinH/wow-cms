@@ -24,6 +24,9 @@ export const es = {
   'store.empty': 'No hay artículos publicados.',
   'store.inspect': 'Inspeccionar',
   'store.points': 'puntos',
+  'store.model.hint': 'Arrastra para girar, rueda para acercar',
+  'store.model.label': 'Modelo tridimensional de {name}',
+  'store.model.failed': 'El modelo no se pudo cargar; se muestra el icono.',
 
   'hero.eyebrow': 'Mists of Pandaria',
   'hero.title': 'Redescubre la aventura en su forma más pura',

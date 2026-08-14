@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Inject, Param, Put, Post } from '@nestjs/common';
-import type { Pool, RowDataPacket } from 'mysql2/promise';
+import { Body, Controller, Get, Inject, Param, Put, Post, Query } from '@nestjs/common';
+import { createPool, type Pool, type RowDataPacket } from 'mysql2/promise';
 import { RequirePermission } from '@wowcms/module-auth';
 
 export const STORE_POOL = Symbol('STORE_POOL');
+const worldPools = new Map<string, Pool>();
 
 @Controller()
 export class StoreController {
@@ -17,6 +18,25 @@ export class StoreController {
 
   @Get('items')
   async items() { return this.listItems(false); }
+
+  @Get('admin/item-search') @RequirePermission('store.manage')
+  async searchGameItems(@Query() query: { q?: string; realmId?: string }) {
+    const term = String(query.q ?? '').trim();
+    const realmId = Number(query.realmId);
+    if (!term || !Number.isInteger(realmId) || realmId < 1) return [];
+    const [realmRows] = await this.pool.execute<RowDataPacket[]>('SELECT world_database_url FROM realm WHERE id = ? AND enabled = 1 LIMIT 1', [realmId]);
+    const worldUrl = String(realmRows[0]?.world_database_url ?? '');
+    if (!worldUrl) return [];
+    const world = worldPool(worldUrl);
+    const numeric = /^\d+$/.test(term);
+    const where = numeric ? 'entry = ?' : 'name LIKE ?';
+    const value = numeric ? Number(term) : `%${term}%`;
+    const [rows] = await world.execute<RowDataPacket[]>(`SELECT entry, name, Quality, ItemLevel, RequiredLevel, displayid, class, subclass, InventoryType, description FROM item_template WHERE ${where} ORDER BY name LIMIT 25`, [value]);
+    return rows.map((row) => {
+      const quality = Number(row.Quality ?? 0);
+      return { itemId: Number(row.entry), name: String(row.name ?? ''), quality, qualityColor: qualityColor(quality), itemLevel: Number(row.ItemLevel ?? 0), requiredLevel: Number(row.RequiredLevel ?? 0), displayId: Number(row.displayid ?? 0), classId: Number(row.class ?? 0), subclassId: Number(row.subclass ?? 0), inventoryType: Number(row.InventoryType ?? 0), description: String(row.description ?? '') };
+    });
+  }
 
   @Get('packages')
   async publicPackages() { const [rows] = await this.pool.query<RowDataPacket[]>('SELECT id,payment_method_id AS paymentMethodId,name,description,amount,currency,donor_points AS donorPoints,vote_points AS votePoints FROM store_package WHERE enabled = 1 ORDER BY sort_order,name'); return rows; }
@@ -50,7 +70,7 @@ export class StoreController {
 
   @Post('admin/items') @RequirePermission('store.manage')
   async createItem(@Body() body: Record<string, unknown>) {
-    const [result] = await this.pool.execute('INSERT INTO store_item (realm_id,item_id,name,description,icon_url,category,price_donor_points,price_vote_points,details_json,enabled) VALUES (?,?,?,?,?,?,?,?,?,?)', [body.realmId == null ? null : Number(body.realmId), Number(body.itemId ?? 0), String(body.name ?? ''), String(body.description ?? ''), String(body.iconUrl ?? ''), String(body.category ?? ''), Number(body.priceDonorPoints ?? 0), Number(body.priceVotePoints ?? 0), JSON.stringify(body.details ?? {}), body.enabled === false ? 0 : 1] as any[]);
+    const [result] = await this.pool.execute('INSERT INTO store_item (realm_id,item_id,name,description,icon_url,category,price_donor_points,price_vote_points,display_id,inventory_type,details_json,enabled) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [body.realmId == null ? null : Number(body.realmId), Number(body.itemId ?? 0), String(body.name ?? ''), String(body.description ?? ''), String(body.iconUrl ?? ''), String(body.category ?? ''), Number(body.priceDonorPoints ?? 0), Number(body.priceVotePoints ?? 0), Number(body.displayId ?? 0), Number(body.inventoryType ?? 0), JSON.stringify(body.details ?? {}), body.enabled === false ? 0 : 1] as any[]);
     return { id: (result as { insertId: number }).insertId };
   }
 
@@ -63,8 +83,20 @@ export class StoreController {
     if (!row) return null;
     let details: Record<string, unknown> = {};
     try { details = row.details_json ? JSON.parse(String(row.details_json)) : {}; } catch { /* invalid legacy metadata remains empty */ }
-    return { id: Number(row.id), realmId: row.realm_id === null ? null : Number(row.realm_id), itemId: Number(row.item_id), name: String(row.name), description: String(row.description ?? ''), iconUrl: String(row.icon_url ?? ''), category: String(row.category ?? ''), priceDonorPoints: Number(row.price_donor_points), priceVotePoints: Number(row.price_vote_points), details, enabled: Boolean(row.enabled) };
+    return { id: Number(row.id), realmId: row.realm_id === null ? null : Number(row.realm_id), itemId: Number(row.item_id), name: String(row.name), description: String(row.description ?? ''), iconUrl: String(row.icon_url ?? ''), category: String(row.category ?? ''), priceDonorPoints: Number(row.price_donor_points), priceVotePoints: Number(row.price_vote_points), displayId: Number(row.display_id ?? 0), inventoryType: Number(row.inventory_type ?? 0), details, enabled: Boolean(row.enabled) };
   }
 }
 
 export class StoreApiModule { static register(pool: Pool) { return { module: StoreApiModule, controllers: [StoreController], providers: [{ provide: STORE_POOL, useValue: pool }] }; } }
+
+function worldPool(url: string): Pool {
+  const existing = worldPools.get(url);
+  if (existing) return existing;
+  const pool = createPool(url);
+  worldPools.set(url, pool);
+  return pool;
+}
+
+function qualityColor(quality: number): string {
+  return ({ 0: '#9d9d9d', 1: '#ffffff', 2: '#1eff00', 3: '#0070dd', 4: '#a335ee', 5: '#ff8000', 6: '#e6cc80' } as Record<number, string>)[quality] ?? '#ffffff';
+}

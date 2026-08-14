@@ -25,6 +25,9 @@ export const en: Record<TranslationKey, string> = {
   'store.empty': 'No items have been published.',
   'store.inspect': 'Inspect',
   'store.points': 'points',
+  'store.model.hint': 'Drag to turn, scroll to zoom',
+  'store.model.label': 'Three-dimensional model of {name}',
+  'store.model.failed': 'The model could not load; showing the icon instead.',
 
   'hero.eyebrow': 'Mists of Pandaria',
   'hero.title': 'Rediscover adventure in its purest form',
