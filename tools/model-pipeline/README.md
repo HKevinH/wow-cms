@@ -53,11 +53,22 @@ and both rules live in `resolve.ts`:
 - **Shoulder**: the client splits the pair into `L`- and `R`-prefixed models.
   The left one stands in for both.
 
-**Known gap.** `mpyq` cannot read the listfile of the patch archives, so only
-base art is reachable. Measured over a random sample of 400 displays, that
-leaves out about one Pandaria item in five — Siege of Orgrimmar gear and PvP
-seasons 2 and 3 among them. Closing it means extracting with StormLib instead;
-the rest of the pipeline needs no change, since it only ever sees loose files.
+Measured against the shipped 5.4.8 client: **22,044 of the 23,975 displays
+build**, from 10,919 distinct files — displays sharing a mesh and a texture
+share a file — for 831 MB in total.
+
+**Known gap: the last 8%.** The 1,931 displays that do not build are ones whose
+art the archives hold as an *incremental patch* rather than a whole file. Their
+block carries `MPQ_FILE_PATCH_FILE`, and the payload is a delta against an
+earlier version — one weapon reads 78,048 bytes long but occupies 198. Applying
+those needs the MPQ patch chain (PTCH headers and BSDIFF records), which `mpyq`
+does not implement; StormLib does, through `SFileOpenPatchArchive`. Nothing
+downstream would change, since the pipeline only ever sees loose files.
+
+The archives to read were themselves a trap worth recording: the later art
+lives in `wow-update-base-*.MPQ` in the root of `Data`, not in the base
+archives and not in `Cache`. Indexing only the base archives finds 64% of the
+catalogue; adding the update archives takes it to 99.6%.
 
 ## Layout
 
