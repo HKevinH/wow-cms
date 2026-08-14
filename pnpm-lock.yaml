@@ -53,6 +53,9 @@ importers:
       '@wowcms/module-media':
         specifier: workspace:*
         version: link:../../modules/media
+      '@wowcms/module-realms':
+        specifier: workspace:*
+        version: link:../../modules/realms
       '@wowcms/module-sdk':
         specifier: workspace:*
         version: link:../../packages/module-sdk
@@ -181,6 +184,21 @@ importers:
       '@wowcms/platform-db':
         specifier: workspace:*
         version: link:../../packages/platform-db
+      mysql2:
+        specifier: ^3.11.0
+        version: 3.23.3(@types/node@26.2.0)
+
+  modules/realms:
+    dependencies:
+      '@nestjs/common':
+        specifier: ^10.4.0
+        version: 10.4.22(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@wowcms/module-auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@wowcms/module-sdk':
+        specifier: workspace:*
+        version: link:../../packages/module-sdk
       mysql2:
         specifier: ^3.11.0
         version: 3.23.3(@types/node@26.2.0)

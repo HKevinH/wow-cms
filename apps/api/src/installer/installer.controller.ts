@@ -9,6 +9,7 @@ import { authModule } from '@wowcms/module-auth';
 import { contentModule } from '@wowcms/module-content';
 import { mediaModule } from '@wowcms/module-media';
 import { settingsModule } from '@wowcms/module-settings';
+import { realmsModule } from '@wowcms/module-realms';
 import { createCmsPool, runMigrations } from '@wowcms/platform-db';
 
 interface InstallBody {
@@ -21,6 +22,7 @@ interface InstallBody {
   siteName?: string;
   serverDescription?: string;
   expansion?: string;
+  realmlist?: string;
   theme?: string;
   authPort?: string;
   worldPort?: string;
@@ -62,9 +64,10 @@ export class InstallerController {
       const cmsPool = createCmsPool(cmsUrl);
       const cmsConnection = await cmsPool.getConnection();
       try {
-        const modules = [authModule, accountsModule, contentModule, mediaModule, settingsModule];
+        const modules = [authModule, accountsModule, contentModule, mediaModule, settingsModule, realmsModule];
         await runMigrations(cmsConnection as never, modules);
         await saveInitialSettings(cmsPool, body);
+        await saveInitialRealm(cmsPool, body, { authUrl, charactersUrl: databaseUrl(adminUrl, charactersDatabase), worldUrl: databaseUrl(adminUrl, worldDatabase) });
         await writeEnvironment({ authUrl, cmsUrl, webOrigin: body.webOrigin, charactersUrl: databaseUrl(adminUrl, charactersDatabase), worldUrl: databaseUrl(adminUrl, worldDatabase) });
       } finally { cmsConnection.release(); await cmsPool.end(); }
       void adapter;
@@ -115,6 +118,13 @@ async function saveInitialSettings(pool: ReturnType<typeof createCmsPool>, body:
   };
   for (const [key, value] of Object.entries(values)) await pool.execute('INSERT INTO settings_value (namespace, setting_key, setting_value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)', ['site', key, value]);
   await pool.execute('INSERT INTO settings_value (namespace, setting_key, setting_value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)', ['system', 'installationComplete', 'true']);
+}
+
+async function saveInitialRealm(pool: ReturnType<typeof createCmsPool>, body: InstallBody, urls: { authUrl: string; charactersUrl: string; worldUrl: string }): Promise<void> {
+  const name = body.siteName?.trim() || 'Reino de Pandaria';
+  const slug = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 96) || 'default';
+  const adminUrl = new URL(body.mysqlAdminUrl || 'mysql://127.0.0.1');
+  await pool.execute('INSERT INTO realm (slug, name, description, expansion, realmlist, auth_database_url, characters_database_url, world_database_url, soap_host, soap_port, auth_port, world_port, store_url, theme, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1) ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), expansion=VALUES(expansion), auth_database_url=VALUES(auth_database_url), characters_database_url=VALUES(characters_database_url), world_database_url=VALUES(world_database_url), soap_port=VALUES(soap_port), auth_port=VALUES(auth_port), world_port=VALUES(world_port), store_url=VALUES(store_url), theme=VALUES(theme), enabled=1', [slug, name, body.serverDescription?.trim() || '', body.expansion?.trim() || '', body.realmlist?.trim() || '', urls.authUrl, urls.charactersUrl, urls.worldUrl, adminUrl.hostname, Number(body.soapPort || 7878), Number(body.authPort || 3724), Number(body.worldPort || 8085), body.storeUrl?.trim() || '', body.theme?.trim() || 'pandaria']);
 }
 
 async function checkGameDatabases(adminUrl: string, authDatabase: string, charactersDatabase: string, worldDatabase: string) {

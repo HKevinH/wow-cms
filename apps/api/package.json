@@ -18,6 +18,7 @@
     "@wowcms/module-auth": "workspace:*",
     "@wowcms/module-content": "workspace:*",
     "@wowcms/module-media": "workspace:*",
+    "@wowcms/module-realms": "workspace:*",
     "@wowcms/module-settings": "workspace:*",
     "@wowcms/module-sdk": "workspace:*",
     "@wowcms/platform-db": "workspace:*",
