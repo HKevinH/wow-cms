@@ -12,6 +12,7 @@ import { RealmsApiModule } from '@wowcms/module-realms';
 import { DiagnosticsController } from './diagnostics/diagnostics.controller';
 import { PLATFORM_REPORTER } from './platform/platform.service';
 import { InstallerController } from './installer/installer.controller';
+import { STATUS_AUTH_POOL, STATUS_CMS_POOL, StatusController } from './status/status.controller';
 
 export interface AppOptions {
   readonly pool: Pool;
@@ -53,8 +54,12 @@ export class AppModule {
           { path: 'api/m/realms', module: RealmsApiModule },
         ]),
       ],
-      controllers: [DiagnosticsController, InstallerController],
-      providers: [{ provide: PLATFORM_REPORTER, useValue: { report: () => options.report } }],
+      controllers: [DiagnosticsController, InstallerController, StatusController],
+      providers: [
+        { provide: PLATFORM_REPORTER, useValue: { report: () => options.report } },
+        { provide: STATUS_AUTH_POOL, useValue: options.pool },
+        { provide: STATUS_CMS_POOL, useValue: options.cmsPool },
+      ],
     };
   }
 }
