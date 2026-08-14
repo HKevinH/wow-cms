@@ -37,11 +37,11 @@ export class RealmsController {
 
   @Post()
   @RequirePermission('realms.manage')
-  async create(@Body() body: RealmBody) { try { const values = normalize(body, true); const [result] = await this.pool.execute('INSERT INTO realm (slug, name, description, expansion, realmlist, auth_database_url, characters_database_url, world_database_url, soap_host, soap_port, auth_port, world_port, store_url, theme, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', values); return this.read(String((result as { insertId: number }).insertId)); } catch (error) { if ((error as { code?: string }).code === 'ER_DUP_ENTRY') throw new ConflictException('Realm slug already exists.'); throw error; } }
+  async create(@Body() body: RealmBody) { try { const values = normalize(body, true); const [result] = await this.pool.execute('INSERT INTO realm (slug, name, description, expansion, realmlist, auth_database_url, characters_database_url, world_database_url, soap_host, soap_port, auth_port, world_port, store_url, theme, enabled) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', values); return this.read(String((result as { insertId: number }).insertId)); } catch (error) { if ((error as { code?: string }).code === 'ER_DUP_ENTRY') throw new ConflictException('Realm slug or one of its ports already exists.'); throw error; } }
 
   @Put(':id')
   @RequirePermission('realms.manage')
-  async update(@Param('id') id: string, @Body() body: RealmBody) { const row = await this.find(id); const values = normalize(body, false); await this.pool.execute('UPDATE realm SET slug=?, name=?, description=?, expansion=?, realmlist=?, auth_database_url=?, characters_database_url=?, world_database_url=?, soap_host=?, soap_port=?, auth_port=?, world_port=?, store_url=?, theme=?, enabled=? WHERE id=?', [...values, row.id]); return this.read(String(row.id)); }
+  async update(@Param('id') id: string, @Body() body: RealmBody) { try { const row = await this.find(id); const values = normalize(body, false); await this.pool.execute('UPDATE realm SET slug=?, name=?, description=?, expansion=?, realmlist=?, auth_database_url=?, characters_database_url=?, world_database_url=?, soap_host=?, soap_port=?, auth_port=?, world_port=?, store_url=?, theme=?, enabled=? WHERE id=?', [...values, row.id]); return this.read(String(row.id)); } catch (error) { if ((error as { code?: string }).code === 'ER_DUP_ENTRY') throw new ConflictException('Realm slug or one of its ports already exists.'); throw error; } }
 
   @Delete(':id')
   @RequirePermission('realms.manage')

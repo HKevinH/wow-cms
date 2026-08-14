@@ -26,4 +26,12 @@ export const realmsMigrations: readonly Migration[] = [{
     UNIQUE KEY uq_realm_slug (slug),
     KEY idx_realm_enabled (enabled, name)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`],
+}, {
+  version: 2,
+  name: 'unique-realm-ports',
+  statements: [
+    'ALTER TABLE realm ADD UNIQUE KEY uq_realm_soap_port (soap_port)',
+    'ALTER TABLE realm ADD UNIQUE KEY uq_realm_auth_port (auth_port)',
+    'ALTER TABLE realm ADD UNIQUE KEY uq_realm_world_port (world_port)',
+  ],
 }];

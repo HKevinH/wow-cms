@@ -253,7 +253,7 @@ export const prerender = false;
     show();
   });
   fetch(
-    `${import.meta.env.PUBLIC_API_BASE ?? "http://localhost:3001"}/api/m/settings/public`,
+    `${import.meta.env.PUBLIC_API_BASE ?? "http://localhost:3001"}/api/install/status`,
   )
     .then((response) => (response.ok ? response.json() : null))
     .then((status) => {

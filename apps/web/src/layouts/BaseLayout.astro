@@ -1,11 +1,11 @@
 ---
-import Seo from '../components/Seo.astro';
-import { resolveTheme } from '../themes';
-import { DEFAULT_LOCALE, type Locale } from '../i18n';
-import '../themes/base.css';
-import '../themes/pandaria.css';
-import '../themes/blizzard.css';
-import '../themes/minimal.css';
+import Seo from "../components/Seo.astro";
+import { resolveTheme } from "../themes";
+import { DEFAULT_LOCALE, type Locale } from "../i18n";
+import "../themes/base.css";
+import "../themes/pandaria.css";
+import "../themes/blizzard.css";
+import "../themes/minimal.css";
 
 /** The only place the document shell exists. Public pages and the dashboard both
  *  build on this, so meta tags, theme wiring and the base stylesheet are written
@@ -49,39 +49,74 @@ const theme = resolveTheme();
       href="#main"
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-theme focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-text"
     >
-      {locale === 'es' ? 'Saltar al contenido' : 'Skip to content'}
+      {locale === "es" ? "Saltar al contenido" : "Skip to content"}
     </a>
 
     <slot />
 
     <script is:inline>
-      const apiBase = import.meta.env.PUBLIC_API_BASE ?? 'http://localhost:3001';
+      const apiBase =
+        import.meta.env.PUBLIC_API_BASE ?? "http://localhost:3001";
       const path = window.location.pathname;
-      fetch(`${apiBase}/api/m/settings/public`, { credentials: 'include' })
-        .then((response) => response.ok ? response.json() : null)
+      const readConfig = () =>
+        fetch(`${apiBase}/api/m/settings/public`, {
+          credentials: "include",
+        }).then((response) =>
+          response.ok
+            ? response.json()
+            : fetch(`${apiBase}/api/install/status`).then((fallback) =>
+                fallback.ok ? fallback.json() : null,
+              ),
+        );
+      readConfig()
         .then((config) => {
-          if (!config?.installed && path !== '/install') { window.location.replace('/install'); return; }
+          if (!config?.installed && path !== "/install") {
+            window.location.replace("/install");
+            return;
+          }
           if (!config?.values) return;
-          document.querySelectorAll('[data-site-name]').forEach((node) => { node.textContent = config.values.siteName; });
-          document.querySelectorAll('[data-site-description]').forEach((node) => { node.textContent = config.values.serverDescription; });
-          document.querySelectorAll('[data-site-meta]').forEach((node) => { node.textContent = `${config.values.expansion} · Auth ${config.values.authPort} · World ${config.values.worldPort}`; });
-          document.querySelectorAll('[data-site-store]').forEach((node) => { node.setAttribute('href', config.values.storeUrl); });
-          document.querySelectorAll('[data-site-link]').forEach((node) => {
-            const key = node.getAttribute('data-site-link');
-            const value = key === 'discord' ? config.values.discordUrl : key === 'rules' ? config.values.rulesUrl : config.values.contactUrl;
-            if (value) { node.setAttribute('href', value); node.removeAttribute('hidden'); } else { node.setAttribute('hidden', ''); }
+          document.querySelectorAll("[data-site-name]").forEach((node) => {
+            node.textContent = config.values.siteName;
+          });
+          document
+            .querySelectorAll("[data-site-description]")
+            .forEach((node) => {
+              node.textContent = config.values.serverDescription;
+            });
+          document.querySelectorAll("[data-site-meta]").forEach((node) => {
+            node.textContent = `${config.values.expansion} · Auth ${config.values.authPort} · World ${config.values.worldPort}`;
+          });
+          document.querySelectorAll("[data-site-store]").forEach((node) => {
+            node.setAttribute("href", config.values.storeUrl);
+          });
+          document.querySelectorAll("[data-site-link]").forEach((node) => {
+            const key = node.getAttribute("data-site-link");
+            const value =
+              key === "discord"
+                ? config.values.discordUrl
+                : key === "rules"
+                  ? config.values.rulesUrl
+                  : config.values.contactUrl;
+            if (value) {
+              node.setAttribute("href", value);
+              node.removeAttribute("hidden");
+            } else {
+              node.setAttribute("hidden", "");
+            }
           });
           document.documentElement.dataset.siteTheme = config.values.theme;
         })
-        .catch(() => { if (path !== '/install') window.location.replace('/install'); });
+        .catch(() => {
+          if (path !== "/install") window.location.replace("/install");
+        });
     </script>
 
     <script is:inline>
       // Applied before paint so a reader who chose light or dark never sees the
       // other one flash first.
-      const stored = localStorage.getItem('theme');
-      if (stored === 'dark' || stored === 'light') {
-        document.documentElement.setAttribute('data-theme', stored);
+      const stored = localStorage.getItem("theme");
+      if (stored === "dark" || stored === "light") {
+        document.documentElement.setAttribute("data-theme", stored);
       }
     </script>
   </body>

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Get, Post } from '@nestjs/common';
 import { createConnection } from 'mysql2/promise';
 import type { RowDataPacket } from 'mysql2/promise';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -33,6 +33,11 @@ interface InstallBody {
 
 @Controller('api/install')
 export class InstallerController {
+  @Get('status')
+  async status(): Promise<{ installed: boolean }> {
+    return { installed: await this.isInstalled() };
+  }
+
   @Post()
   async install(@Body() body: InstallBody): Promise<{ ok: true; restartRequired: true }> {
     if (await this.isInstalled() && body.reinstall !== true && body.reinstall !== 'true') {
@@ -69,6 +74,10 @@ export class InstallerController {
         await saveInitialSettings(cmsPool, body);
         await saveInitialRealm(cmsPool, body, { authUrl, charactersUrl: databaseUrl(adminUrl, charactersDatabase), worldUrl: databaseUrl(adminUrl, worldDatabase) });
         await writeEnvironment({ authUrl, cmsUrl, webOrigin: body.webOrigin, charactersUrl: databaseUrl(adminUrl, charactersDatabase), worldUrl: databaseUrl(adminUrl, worldDatabase) });
+        process.env.WOWCMS_AUTH_URL = authUrl;
+        process.env.WOWCMS_DATABASE_URL = cmsUrl;
+        process.env.WOWCMS_CHARACTERS_URL = databaseUrl(adminUrl, charactersDatabase);
+        process.env.WOWCMS_WORLD_URL = databaseUrl(adminUrl, worldDatabase);
       } finally { cmsConnection.release(); await cmsPool.end(); }
       void adapter;
     } finally { connection.release(); await emulator.end(); }
@@ -87,8 +96,7 @@ export class InstallerController {
   }
 
   private async isInstalled(): Promise<boolean> {
-    const url = process.env.WOWCMS_DATABASE_URL;
-    if (!url) return false;
+    const url = process.env.WOWCMS_DATABASE_URL ?? 'mysql://root:root@127.0.0.1:3306/wowcms';
     const pool = createCmsPool(url);
     try {
       const [rows] = await pool.query<(RowDataPacket & { setting_value: string })[]>('SELECT setting_value FROM settings_value WHERE namespace = ? AND setting_key = ?', ['system', 'installationComplete']);
