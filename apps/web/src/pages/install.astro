@@ -4,8 +4,8 @@ export const prerender = false;
 ---
 <BaseLayout title="Install WoW CMS" description="Configure your WoW CMS installation.">
   <main class="mx-auto max-w-2xl px-4 py-14">
-    <h1>Install WoW CMS</h1>
-    <p class="text-muted">Connect MySQL, create the CMS database and generate the initial configuration.</p>
+    <h1 id="install-title">Install WoW CMS</h1>
+    <p id="install-description" class="text-muted">Connect MySQL, create the CMS database and generate the initial configuration.</p>
     <form id="installer" class="mt-8 grid gap-4 rounded-theme border border-border bg-surface p-6">
       <label>MySQL admin URL<input name="mysqlAdminUrl" value="mysql://root:root@127.0.0.1:3306" required class="mt-1 w-full rounded border p-2" /></label>
       <label>Auth database<input name="authDatabase" value="auth" required class="mt-1 w-full rounded border p-2" /></label>
@@ -17,7 +17,8 @@ export const prerender = false;
       <label>Theme<select name="theme" class="mt-1 w-full rounded border p-2"><option value="pandaria">Pandaria</option><option value="blizzard">Blizzard</option><option value="minimal">Minimal</option></select></label>
       <div class="grid gap-4 sm:grid-cols-2"><label>Authserver port<input name="authPort" type="number" value="3724" required class="mt-1 w-full rounded border p-2" /></label><label>Worldserver port<input name="worldPort" type="number" value="8085" required class="mt-1 w-full rounded border p-2" /></label></div>
       <label>Store URL<input name="storeUrl" type="url" value="http://localhost:8787" class="mt-1 w-full rounded border p-2" /></label>
-      <button class="rounded bg-accent px-4 py-2">Install</button>
+      <input id="reinstall" type="hidden" name="reinstall" value="false" />
+      <button id="install-submit" class="rounded bg-accent px-4 py-2">Install</button>
       <p id="result" role="status"></p>
     </form>
   </main>
@@ -26,6 +27,22 @@ export const prerender = false;
   import { apiFetch } from '../lib/api';
   const form = document.querySelector<HTMLFormElement>('#installer');
   const result = document.querySelector<HTMLElement>('#result');
+  const title = document.querySelector<HTMLElement>('#install-title');
+  const description = document.querySelector<HTMLElement>('#install-description');
+  const submit = document.querySelector<HTMLButtonElement>('#install-submit');
+  const reinstall = document.querySelector<HTMLInputElement>('#reinstall');
+  const apiBase = import.meta.env.PUBLIC_API_BASE ?? 'http://localhost:3001';
+
+  fetch(`${apiBase}/api/m/settings/public`)
+    .then((response) => response.ok ? response.json() : null)
+    .then((status) => {
+      if (!status?.installed) return;
+      if (title) title.textContent = 'Reinstall WoW CMS';
+      if (description) description.textContent = 'The installation already exists. Reinstalling will update configuration and preserve existing content and accounts.';
+      if (submit) submit.textContent = 'Reinstall';
+      if (reinstall) reinstall.value = 'true';
+    })
+    .catch(() => undefined);
   form?.addEventListener('submit', async (event) => {
     event.preventDefault(); if (!result) return; result.textContent = 'Installing…';
     try { await apiFetch('/api/install', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) }); result.textContent = 'Installation complete. Restart the API without installer mode, then reload the site.'; }

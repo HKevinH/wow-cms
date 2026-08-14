@@ -23,13 +23,14 @@ interface InstallBody {
   authPort?: string;
   worldPort?: string;
   storeUrl?: string;
+  reinstall?: boolean | string;
 }
 
 @Controller('api/install')
 export class InstallerController {
   @Post()
   async install(@Body() body: InstallBody): Promise<{ ok: true; restartRequired: true }> {
-    if (await this.isInstalled()) {
+    if (await this.isInstalled() && body.reinstall !== true && body.reinstall !== 'true') {
       throw new ForbiddenException('The installation is already complete.');
     }
     const adminUrl = body.mysqlAdminUrl?.trim();
