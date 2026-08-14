@@ -30,8 +30,6 @@ export const es = {
   'adventure.title': 'Tu aventura clásica continúa',
   'adventure.body':
     'Deja atrás el caos y descubre un continente perdido entre la niebla. Explora sus ruinas, reúne a tus aliados y defiende Pandaria de una amenaza que llevaba siglos esperando.',
-  'adventure.primary': 'Crear cuenta',
-  'adventure.secondary': 'Cómo conectar',
   'adventure.imageAlt': 'Aventureros Pandaren preparados para explorar Pandaria',
 
   'features.title': 'Características reseñables',

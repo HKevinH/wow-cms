@@ -31,8 +31,6 @@ export const en: Record<TranslationKey, string> = {
   'adventure.title': 'Your classic adventure continues',
   'adventure.body':
     'Leave the chaos behind and discover a continent lost in the mists. Explore its ruins, gather your allies and defend Pandaria from a threat that has waited for centuries.',
-  'adventure.primary': 'Create account',
-  'adventure.secondary': 'How to connect',
   'adventure.imageAlt': 'Pandaren adventurers ready to explore Pandaria',
 
   'features.title': 'Notable features',

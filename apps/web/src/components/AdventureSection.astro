@@ -1,7 +1,6 @@
 ---
-import Button from './Button.astro';
 import { getSiteConfig } from '../config/site';
-import { path, useTranslations, type Locale } from '../i18n';
+import { useTranslations, type Locale } from '../i18n';
 
 interface Props {
   locale: Locale;
@@ -21,10 +20,6 @@ const { media } = getSiteConfig();
         {t('adventure.title')}
       </h2>
       <p class="mb-8 text-lg leading-relaxed text-white/85 md:text-xl">{t('adventure.body')}</p>
-      <div class="flex flex-wrap gap-4">
-        <Button href={path('register', locale)} variant="purchase" size="lg">{t('adventure.primary')}</Button>
-        <Button href={path('connect', locale)} variant="outline" size="lg">{t('adventure.secondary')}</Button>
-      </div>
     </div>
 
     <figure class="relative m-0 overflow-hidden border-2 border-[#b88a15] bg-black/30 shadow-[0_0_40px_rgba(0,0,0,.35)]">
