@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import cookie from '@fastify/cookie';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { ADAPTER_CAPABILITIES, type AdapterCapability, type AdapterReport } from '@wowcms/contracts';
@@ -64,7 +65,11 @@ async function bootstrap(): Promise<void> {
     AppModule.register({ pool, cmsPool, fieldMap, report }),
     new FastifyAdapter(),
   );
-  app.enableCors();
+  await app.register(cookie);
+  app.enableCors({
+    origin: process.env.WOWCMS_WEB_ORIGIN ?? 'http://localhost:4321',
+    credentials: true,
+  });
   await app.listen(Number(process.env.PORT ?? 3001), '0.0.0.0');
   console.log(`API listening on ${await app.getUrl()} using adapter ${report.adapterId}`);
 }
