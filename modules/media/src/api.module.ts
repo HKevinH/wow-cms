@@ -4,7 +4,7 @@ import type { Pool, RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import { RequirePermission } from '@wowcms/module-auth';
 export const MEDIA_POOL = Symbol('MEDIA_POOL');
 
-@Controller('media')
+@Controller()
 export class MediaController {
   constructor(@Inject(MEDIA_POOL) private readonly pool: Pool) {}
   @Get() async list(@Query() query: { search?: string; kind?: string; limit?: string; offset?: string }): Promise<MediaPage> {

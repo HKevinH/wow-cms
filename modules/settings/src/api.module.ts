@@ -5,7 +5,7 @@ import { RequirePermission } from '@wowcms/module-auth';
 import type { Pool, RowDataPacket } from 'mysql2/promise';
 export const SETTINGS_POOL = Symbol('SETTINGS_POOL');
 
-@Controller('settings')
+@Controller()
 export class SettingsController {
   constructor(@Inject(SETTINGS_POOL) private readonly pool: Pool) {}
   @Get() async get() { const [rows] = await this.pool.query<RowDataPacket[]>('SELECT namespace, setting_key AS `key`, setting_value AS value, updated_at AS updatedAt FROM settings_value WHERE namespace = ?', [SITE_SETTINGS_SCHEMA.namespace]); return { schema: SITE_SETTINGS_SCHEMA, values: applySchema(SITE_SETTINGS_SCHEMA, rows as SettingRecord[]) }; }

@@ -140,7 +140,8 @@ export const prerender = false;
               value="7878"
               required
               class="mt-1 w-full rounded border p-2"
-            /></label>
+            /></label
+          >
         </div>
         <label
           >Store URL<input
@@ -169,7 +170,8 @@ export const prerender = false;
           class="rounded border px-4 py-2"
           hidden>Previous</button
         ><button id="next" type="button" class="rounded bg-accent px-4 py-2"
-          >Next</button>
+          >Next</button
+        >
       </div>
       <p id="result" role="status" class="mt-4"></p>
     </form>
@@ -194,7 +196,7 @@ export const prerender = false;
     fields.forEach((field) => {
       const active = Number(field.dataset.step) === current;
       field.hidden = !active;
-      field.style.display = active ? 'grid' : 'none';
+      field.style.display = active ? "grid" : "none";
     });
     if (previous) previous.hidden = current === 1;
     if (next) next.hidden = current === 4;
