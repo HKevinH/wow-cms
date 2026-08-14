@@ -4,7 +4,13 @@
   "type": "module",
   "engines": { "node": ">=20" },
   "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "dev:api": "pnpm --filter @wowcms/api dev",
+    "dev:web": "pnpm --filter @wowcms/web dev",
+    "build": "pnpm -r --parallel build",
+    "media:fetch": "pnpm --filter @wowcms/web media:fetch",
     "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc -b"
   },
   "devDependencies": {

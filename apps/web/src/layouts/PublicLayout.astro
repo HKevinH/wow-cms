@@ -1,0 +1,57 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import type { Locale } from '../i18n';
+
+/** Chrome for pages a visitor sees. The header and footer live here so adding a
+ *  public page never means copying them. */
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  locale: Locale;
+  image?: string;
+  /** Landing pages own their heading and hero, so they opt out of the default. */
+  showHeading?: boolean;
+  /** Full-bleed pages render their own containers. */
+  bare?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  locale,
+  image,
+  showHeading = true,
+  bare = false,
+} = Astro.props;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  locale={locale}
+  image={image}
+>
+  <div class="flex min-h-screen flex-col">
+    <SiteHeader locale={locale} />
+
+    {
+      bare ? (
+        <main id="main">
+          <slot />
+        </main>
+      ) : (
+        <main id="main" class="mx-auto w-full max-w-3xl flex-1 px-4 py-14">
+          {showHeading && <h1 class="mb-8 mt-0 text-3xl md:text-4xl">{title}</h1>}
+          <slot />
+        </main>
+      )
+    }
+
+    <SiteFooter locale={locale} />
+  </div>
+</BaseLayout>

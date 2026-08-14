@@ -1,0 +1,9 @@
+---
+import StatusView from '../views/StatusView.astro';
+
+/** Server-rendered. 'Is the realm up' is the one answer on this site that is
+ *  worthless if it was decided when the site was built. */
+export const prerender = false;
+---
+
+<StatusView locale="es" />

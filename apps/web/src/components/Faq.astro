@@ -1,0 +1,49 @@
+---
+/** An accordion built on <details>. No script: the element already opens, closes,
+ *  responds to the keyboard and is found by in-page search, and every line of
+ *  JavaScript added here would be undoing one of those. */
+export interface FaqEntry {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  heading?: string;
+  entries: FaqEntry[];
+}
+
+const { heading, entries } = Astro.props;
+---
+
+<section class="band border-b border-border bg-faq-band">
+  <div class="mx-auto max-w-3xl px-4 py-16 md:py-24">
+    {
+      heading && (
+        <h2 class="mb-10 mt-0 text-center text-2xl uppercase tracking-[0.2em] text-highlight">
+          {heading}
+        </h2>
+      )
+    }
+
+    <div class="divide-y divide-border border-y border-border">
+      {
+        entries.map((entry) => (
+          <details class="group">
+            <summary
+              class="flex cursor-pointer list-none items-center gap-4 py-5 font-display text-lg text-text marker:content-none hover:text-accent"
+            >
+              <span class="flex-1">{entry.question}</span>
+              <span
+                aria-hidden="true"
+                class="text-accent transition-transform group-open:rotate-45"
+              >
+                +
+              </span>
+            </summary>
+            <p class="m-0 pb-6 pr-8 leading-relaxed text-muted">{entry.answer}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

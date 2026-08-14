@@ -1,0 +1,2 @@
+import type { Migration } from '@wowcms/module-sdk';
+export const mediaMigrations: readonly Migration[] = [{ version: 1, name: 'media-library', statements: [`CREATE TABLE IF NOT EXISTS media_asset (id INT UNSIGNED NOT NULL AUTO_INCREMENT, kind VARCHAR(16) NOT NULL, title VARCHAR(200) NOT NULL, url VARCHAR(500) NOT NULL, mime_type VARCHAR(128) NOT NULL, bytes INT UNSIGNED NULL, width INT UNSIGNED NULL, height INT UNSIGNED NULL, uploaded_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (id), KEY idx_media_kind (kind)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`] }];

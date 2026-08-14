@@ -1,0 +1,67 @@
+/* Modelled on worldofwarcraft.blizzard.com/classic: a near-black ground with a
+   green cast, cream type, and two accents rather than one - green carries the
+   primary action, amber carries the purchase. Getting that pair right is most of
+   what makes the page recognisable.
+
+   Scoped by [data-site-theme] so every theme can ship in the same stylesheet
+   bundle and the active one is chosen by an attribute. Two small themes cost
+   less than the machinery for loading one conditionally, and switching at
+   runtime comes free. */
+
+:root[data-site-theme='blizzard'] {
+  --color-bg: #0a0f0c;
+  --color-surface: #0d1a14;
+  --color-surface-raised: #12241b;
+  --color-text: #f2e4c8;
+  --color-text-muted: #a99b82;
+  --color-border: #23372c;
+
+  /* Primary action. The green on the live site is a desaturated emerald, not a
+     bright one; brighter reads as a generic web button. */
+  --color-accent: #06a96c;
+  --color-accent-text: #04180f;
+
+  /* Secondary action: anything that costs money. Kept separate so a component
+     never has to decide which of the two it means. */
+  --color-highlight: #efa022;
+  --color-highlight-text: #1d1405;
+
+  --color-danger: #e0705c;
+  --color-success: #6fd3a0;
+
+  --radius: 4px;
+  --space: 1rem;
+  --measure: 78rem;
+
+  --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-display: 'Trajan Pro', 'Cinzel', Georgia, 'Times New Roman', serif;
+
+  /* The header sits on a darker green wash than the page, which is what gives
+     the real site its layered look without an image. */
+  --gradient-header: linear-gradient(180deg, #0c2119 0%, #07130e 100%);
+  --texture-page: radial-gradient(ellipse at 50% -10%, #12241b 0%, #0a0f0c 60%);
+  --shadow-panel: 0 1px 0 rgba(242, 228, 200, 0.05), 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* This theme is dark by construction. A reader who explicitly asks for light
+   gets a legible variant rather than being ignored. */
+:root[data-site-theme='blizzard'][data-theme='light'] {
+  --color-bg: #eee8db;
+  --color-surface: #f7f3e9;
+  --color-surface-raised: #fffdf7;
+  --color-text: #1d2a22;
+  --color-text-muted: #5c6b5f;
+  --color-border: #cbc3ac;
+
+  --color-accent: #04724a;
+  --color-accent-text: #ffffff;
+  --color-highlight: #96610a;
+  --color-highlight-text: #ffffff;
+
+  --color-danger: #a3301c;
+  --color-success: #1c6b3c;
+
+  --gradient-header: linear-gradient(180deg, #f7f3e9 0%, #eee8db 100%);
+  --texture-page: radial-gradient(ellipse at 50% -10%, #fbf7ee 0%, #eee8db 60%);
+  --shadow-panel: 0 1px 0 rgba(0, 0, 0, 0.04), 0 8px 24px rgba(70, 80, 60, 0.12);
+}

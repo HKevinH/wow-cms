@@ -1,0 +1,2 @@
+import type { Migration } from '@wowcms/module-sdk';
+export const settingsMigrations: readonly Migration[] = [{ version: 1, name: 'settings', statements: [`CREATE TABLE IF NOT EXISTS settings_value (namespace VARCHAR(64) NOT NULL, setting_key VARCHAR(128) NOT NULL, setting_value TEXT NOT NULL, updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (namespace, setting_key)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`] }];

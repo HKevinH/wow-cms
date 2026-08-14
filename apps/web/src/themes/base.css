@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Every theme defines this same set of variables. Components only ever name the
+   variable, never a colour, which is the whole reason a theme can be swapped
+   without touching a component.
+
+   The defaults below are the floor: a theme that ships no artwork, or an install
+   that never ran 'pnpm media:fetch', leaves these alone and every surface falls
+   back to a gradient. Pages must never look broken because a file is missing. */
+
+:root {
+  --color-highlight: var(--color-accent);
+  --color-highlight-text: var(--color-accent-text);
+  --gradient-header: none;
+  --texture-page: none;
+  --texture-panel: none;
+  --image-panel-band: none;
+  --image-faq-band: none;
+  --image-footer-band: none;
+}
+
+@layer base {
+  body {
+    /* The host paints its own background behind the page, so this is explicit
+       rather than inherited. */
+    @apply bg-bg text-text font-body antialiased;
+    background-image: var(--texture-page);
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-wide;
+  }
+
+  /* Anchors inside prose keep the accent; chrome sets its own colours per link
+     and would otherwise have to undo this on every one. */
+  a {
+    @apply text-accent;
+  }
+}
+
+@layer components {
+  /* A band of artwork with the page colour washed over it, dark enough that
+     cream type stays readable whatever the image underneath turns out to be.
+     Written once here because five sections use it and getting the wash wrong
+     in one of them is how a page starts looking accidental. */
+  .band {
+    position: relative;
+    isolation: isolate;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .band::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, var(--color-bg) 0%, transparent 35%, var(--color-bg) 100%);
+  }
+
+  /* Long-form text coming out of the news editor. The editor emits Markdown and
+     the renderer emits plain tags, so the spacing has to be defined somewhere,
+     and it is here rather than in a plugin. */
+  .prose > * + * {
+    margin-top: 1rem;
+  }
+
+  .prose h2,
+  .prose h3 {
+    @apply mt-10 font-display text-xl uppercase tracking-wider text-highlight;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply ml-5 list-outside;
+  }
+
+  .prose ul {
+    @apply list-disc;
+  }
+
+  .prose ol {
+    @apply list-decimal;
+  }
+
+  .prose code {
+    @apply rounded-theme bg-surface-raised px-1.5 py-0.5 text-sm;
+  }
+
+  .prose blockquote {
+    @apply border-l-2 border-accent pl-4 italic text-muted;
+  }
+}

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="">
+  <!-- Placeholder artwork, generated rather than borrowed. A deployment replaces
+       it by dropping its own file in this folder and pointing Hero at it. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#123024"/>
+      <stop offset="55%" stop-color="#0c1c15"/>
+      <stop offset="100%" stop-color="#0a0f0c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="62%" cy="28%" r="42%">
+      <stop offset="0%" stop-color="#efa022" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#efa022" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#06a96c" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#06a96c" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <rect width="1600" height="900" fill="url(#glow)"/>
+
+  <!-- Layered ridges, far to near, each darker to fake depth through mist. -->
+  <path d="M0 560 L240 470 L430 545 L640 430 L860 540 L1080 455 L1320 545 L1600 470 L1600 900 L0 900 Z"
+        fill="#0f2419" opacity="0.85"/>
+  <path d="M0 650 L210 585 L420 655 L660 560 L900 650 L1140 585 L1380 660 L1600 600 L1600 900 L0 900 Z"
+        fill="#0c1b13"/>
+  <path d="M0 745 L260 700 L520 760 L780 690 L1040 755 L1300 705 L1600 760 L1600 900 L0 900 Z"
+        fill="#091310"/>
+
+  <rect y="500" width="1600" height="260" fill="url(#mist)"/>
+</svg>

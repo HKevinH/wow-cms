@@ -1,0 +1,12 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+export const prerender = false;
+---
+<DashboardLayout title="Media">
+  <form id="media-form" class="grid gap-3 rounded-theme border border-border bg-surface p-6"><input name="title" placeholder="Title" required class="rounded border p-2" /><input name="url" type="url" placeholder="https://…" required class="rounded border p-2" /><button class="rounded bg-accent px-4 py-2">Register remote media</button></form>
+  <div id="media-list" class="mt-6 grid gap-2"></div>
+</DashboardLayout>
+<script>
+  import { apiFetch } from '../../lib/api';
+  const list = document.querySelector<HTMLElement>('#media-list'); const load = async () => { if (!list) return; const page = await apiFetch<{items: {title:string; url:string}[]}>('/api/m/media'); list.innerHTML = page.items.map((m) => `<a class="rounded border p-3" href="${m.url}" target="_blank">${m.title}</a>`).join(''); }; document.querySelector<HTMLFormElement>('#media-form')?.addEventListener('submit', async (e) => { e.preventDefault(); const form = e.currentTarget as HTMLFormElement; await apiFetch('/api/m/media/remote', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) }); form.reset(); await load(); }); load();
+</script>

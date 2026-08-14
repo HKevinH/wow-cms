@@ -1,0 +1,38 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import NewsCard from '../components/NewsCard.astro';
+import { fetchNews } from '../lib/content';
+import { useTranslations, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const news = await fetchNews(locale, 24);
+const [lead, ...rest] = news;
+---
+
+<PublicLayout title={t('news.title')} description={t('news.title')} locale={locale} bare>
+  <div class="mx-auto max-w-measure px-4 py-14 md:py-20">
+    <h1 class="mb-10 mt-0 border-b border-border pb-4 text-3xl uppercase tracking-[0.2em] md:text-4xl">
+      {t('news.title')}
+    </h1>
+
+    {
+      news.length === 0 ? (
+        <p class="m-0 text-muted">{t('news.empty')}</p>
+      ) : (
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* The newest post runs across two columns; without it every index page
+              reads as an undifferentiated grid whatever the news actually was. */}
+          {lead && <NewsCard item={lead} locale={locale} featured />}
+          {rest.map((item) => (
+            <NewsCard item={item} locale={locale} />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</PublicLayout>

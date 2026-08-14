@@ -1,0 +1,14 @@
+---
+import AccountView from '../../views/AccountView.astro';
+import { getViewer } from '../../lib/session';
+import { path } from '../../i18n';
+
+export const prerender = false;
+
+const viewer = await getViewer(Astro);
+if (viewer === null) {
+  return Astro.redirect(path('login', 'en'));
+}
+---
+
+<AccountView locale="en" viewer={viewer} />

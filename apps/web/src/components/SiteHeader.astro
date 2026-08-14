@@ -1,0 +1,192 @@
+---
+import Button from './Button.astro';
+import LocaleSwitch from './LocaleSwitch.astro';
+import { getSiteConfig } from '../config/site';
+import { path, useTranslations, type Locale, type RouteName } from '../i18n';
+
+/** The bar across the top: brand panel, section links, then the account controls
+ *  pushed right.
+ *
+ *  Most pages that use this are prerendered, so the header cannot know at build
+ *  time whether the reader is logged in. It renders both states and lets a small
+ *  script pick one after asking the API — which is why the logged-out state is
+ *  the one in the markup: it is the correct answer for most visitors and for
+ *  anyone with script disabled. */
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const site = getSiteConfig();
+
+const sections: { route: RouteName; label: string }[] = [
+  { route: 'home', label: t('nav.home') },
+  { route: 'news', label: t('nav.news') },
+  { route: 'connect', label: t('nav.connect') },
+  { route: 'status', label: t('nav.status') },
+];
+
+const normalise = (value: string) => value.replace(/\/+$/, '') || '/';
+const current = normalise(Astro.url.pathname);
+---
+
+<header class="sticky top-0 z-50 border-b border-border bg-header backdrop-blur-md">
+  <div class="mx-auto flex max-w-measure items-stretch gap-2 px-4">
+    <a
+      href={path('home', locale)}
+      class="flex items-center gap-3 self-stretch border-r border-border py-3 pr-6 no-underline"
+    >
+      {
+        site.media.logo ? (
+          <img src={site.media.logo.src} alt={site.name} width="120" class="h-9 w-auto" />
+        ) : (
+          <span
+            class="grid h-9 w-9 place-items-center rounded-full border border-accent/40 font-display text-lg text-accent"
+            aria-hidden="true"
+          >
+            {site.name.charAt(0)}
+          </span>
+        )
+      }
+      <span class="font-display text-sm font-bold uppercase tracking-[0.2em] text-text">
+        {site.name}
+      </span>
+    </a>
+
+    <nav class="hidden md:block" aria-label={t('nav.menu')}>
+      <ul class="m-0 flex h-full list-none items-center gap-1 p-0">
+        {
+          sections.map((section) => (
+            <li>
+              <a
+                href={path(section.route, locale)}
+                aria-current={current === normalise(path(section.route, locale)) ? 'page' : undefined}
+                class="block px-4 py-2 text-sm font-semibold uppercase tracking-wide text-text no-underline hover:text-accent aria-[current=page]:text-accent"
+              >
+                {section.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="ml-auto flex items-center gap-3 py-3">
+      <LocaleSwitch locale={locale} />
+
+      <!-- Swapped by the script below once the API says who this is. The
+           narrow-screen versions of these links live in the menu instead, so
+           responsive hiding happens on this wrapper and never on the elements the
+           script toggles: a class and an attribute fighting over one element is
+           how a logged-in header ends up showing 'Log in'. -->
+      <div class="hidden items-center gap-3 sm:flex">
+        <a
+          data-session="anonymous"
+          href={path('login', locale)}
+          class="text-sm font-semibold text-muted no-underline hover:text-text"
+        >
+          {t('nav.login')}
+        </a>
+        <a
+          data-session="authenticated"
+          href={path('account', locale)}
+          hidden
+          class="text-sm font-semibold text-accent no-underline hover:text-text"
+        >
+          <span data-session-username>{t('nav.account')}</span>
+        </a>
+
+        <span data-session="anonymous">
+          <Button href={path('register', locale)} variant="purchase">{t('nav.register')}</Button>
+        </span>
+      </div>
+
+      <button
+        id="theme-toggle"
+        type="button"
+        class="rounded-theme border border-border px-2 py-1.5 text-xs text-muted hover:text-accent"
+        aria-label={t('nav.theme')}
+      >
+        ☾
+      </button>
+
+      <button
+        id="menu-toggle"
+        type="button"
+        class="rounded-theme border border-border px-2 py-1.5 text-xs text-muted hover:text-accent md:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label={t('nav.menu')}
+      >
+        ☰
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-menu" hidden class="border-t border-border bg-surface md:hidden">
+    <ul class="m-0 flex list-none flex-col p-0">
+      {
+        [...sections, { route: 'register' as RouteName, label: t('nav.register') }].map(
+          (section) => (
+            <li class="border-b border-border last:border-b-0">
+              <a
+                href={path(section.route, locale)}
+                class="block px-4 py-3 text-sm font-semibold uppercase tracking-wide text-text no-underline hover:text-accent"
+              >
+                {section.label}
+              </a>
+            </li>
+          ),
+        )
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  import { apiFetch } from '../lib/api';
+  import type { SessionResponse } from '@wowcms/contracts';
+
+  const root = document.documentElement;
+
+  // Light and dark are a reader preference, remembered per browser. The theme
+  // itself is a deployment setting and is not touched here.
+  document.querySelector<HTMLButtonElement>('#theme-toggle')?.addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  });
+
+  const menuToggle = document.querySelector<HTMLButtonElement>('#menu-toggle');
+  const menu = document.querySelector<HTMLElement>('#mobile-menu');
+  menuToggle?.addEventListener('click', () => {
+    const open = menuToggle.getAttribute('aria-expanded') === 'true';
+    menuToggle.setAttribute('aria-expanded', String(!open));
+    if (menu) menu.hidden = open;
+  });
+
+  // Prerendered pages cannot know who is reading them, so the answer is asked for
+  // once and the header adjusts. A failure here is not an error state: it means
+  // nobody is logged in, which is what the markup already says.
+  async function reflectSession(): Promise<void> {
+    let session: SessionResponse | null = null;
+    try {
+      session = await apiFetch<SessionResponse>('/api/session');
+    } catch {
+      return;
+    }
+
+    for (const element of document.querySelectorAll<HTMLElement>('[data-session]')) {
+      element.hidden = element.dataset.session !== (session ? 'authenticated' : 'anonymous');
+    }
+
+    if (session) {
+      for (const label of document.querySelectorAll<HTMLElement>('[data-session-username]')) {
+        label.textContent = session.viewer.username;
+      }
+    }
+  }
+
+  void reflectSession();
+</script>

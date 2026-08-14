@@ -1,0 +1,66 @@
+---
+import Seo from '../components/Seo.astro';
+import { resolveTheme } from '../themes';
+import { DEFAULT_LOCALE, type Locale } from '../i18n';
+import '../themes/base.css';
+import '../themes/pandaria.css';
+import '../themes/blizzard.css';
+import '../themes/minimal.css';
+
+/** The only place the document shell exists. Public pages and the dashboard both
+ *  build on this, so meta tags, theme wiring and the base stylesheet are written
+ *  once. */
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  locale?: Locale;
+  image?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  locale = DEFAULT_LOCALE,
+  image,
+  noindex,
+} = Astro.props;
+const theme = resolveTheme();
+---
+
+<!doctype html>
+<html lang={locale} data-site-theme={theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Seo
+      title={title}
+      description={description}
+      canonical={canonical}
+      locale={locale}
+      image={image}
+      noindex={noindex}
+    />
+  </head>
+  <body class="min-h-screen">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-theme focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-text"
+    >
+      {locale === 'es' ? 'Saltar al contenido' : 'Skip to content'}
+    </a>
+
+    <slot />
+
+    <script is:inline>
+      // Applied before paint so a reader who chose light or dark never sees the
+      // other one flash first.
+      const stored = localStorage.getItem('theme');
+      if (stored === 'dark' || stored === 'light') {
+        document.documentElement.setAttribute('data-theme', stored);
+      }
+    </script>
+  </body>
+</html>

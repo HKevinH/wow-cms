@@ -1,0 +1,87 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import FormField from '../components/FormField.astro';
+import Button from '../components/Button.astro';
+import Alert from '../components/Alert.astro';
+import { path, useTranslations, type Locale } from '../i18n';
+
+/** Prerendered: the form posts to the API from the browser, so this page needs no
+ *  server render per visitor. */
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<PublicLayout title={t('register.title')} description={t('register.description')} locale={locale}>
+  <p class="mb-8 mt-0 text-lg text-muted">{t('register.description')}</p>
+
+  <!-- The result messages ride on the form as data attributes rather than through
+       a global, so the script stays one copy and still speaks the page's
+       language. -->
+  <form
+    id="register"
+    class="rounded-theme border border-border bg-surface p-6 shadow-panel"
+    data-success={t('register.success')}
+    data-fallback={t('register.error')}
+  >
+    <FormField
+      name="username"
+      label={t('register.username')}
+      required
+      minlength={3}
+      maxlength={32}
+      hint={t('register.usernameHint')}
+    />
+    <FormField name="email" label={t('register.email')} type="email" required />
+    <FormField
+      name="password"
+      label={t('register.password')}
+      type="password"
+      required
+      minlength={8}
+      hint={t('register.passwordHint')}
+    />
+    <Button type="submit" variant="purchase">{t('register.submit')}</Button>
+  </form>
+
+  <Alert id="result" />
+
+  <p class="mt-8 text-sm text-muted">
+    {t('register.haveAccount')}{' '}
+    <a href={path('login', locale)} class="font-semibold">{t('nav.login')}</a>
+  </p>
+</PublicLayout>
+
+<script>
+  import { apiFetch } from '../lib/api';
+
+  const form = document.querySelector<HTMLFormElement>('#register');
+  const result = document.querySelector<HTMLElement>('#result');
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!result) return;
+
+    const data = Object.fromEntries(new FormData(form));
+    const submit = form.querySelector('button[type="submit"]');
+    submit?.setAttribute('disabled', 'true');
+
+    try {
+      await apiFetch('/api/m/accounts/register', { method: 'POST', body: JSON.stringify(data) });
+      result.classList.remove('text-danger');
+      result.classList.add('text-success');
+      result.textContent = form.dataset.success ?? '';
+      form.reset();
+    } catch (error) {
+      result.classList.remove('text-success');
+      result.classList.add('text-danger');
+      result.textContent =
+        error instanceof Error ? error.message : (form.dataset.fallback ?? '');
+    } finally {
+      submit?.removeAttribute('disabled');
+    }
+  });
+</script>

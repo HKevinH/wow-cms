@@ -1,0 +1,104 @@
+{
+  "$comment": [
+    "External artwork the shipped themes reference. Nothing here is committed:",
+    "'pnpm media:fetch' downloads each entry into public/media/remote/, which git",
+    "ignores. The manifest is versioned so any clone reproduces the same set with",
+    "one command, and so a deployment can see at a glance what it is pulling in and",
+    "from where.",
+    "",
+    "These files belong to Blizzard Entertainment. They are here because this",
+    "install points at them; a deployment that publishes to the world should",
+    "replace them with its own artwork by editing this file and src/config/site.ts."
+  ],
+  "baseDir": "public/media/remote",
+  "assets": [
+    {
+      "path": "hero/masthead-loop.mp4",
+      "url": "https://blz-contentstack-assets.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt41a4661df2fb0567/687ab421950f1850af853a2f/MoPLaunch_Masthead_loop.mp4"
+    },
+    {
+      "path": "hero/masthead-loop.webm",
+      "url": "https://blz-contentstack-assets.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltadf69130be18e0de/687ab40e9c5ca9c1a31dcb04/MoPLaunch_Masthead_loop.webm"
+    },
+    {
+      "path": "hero/masthead.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt57f72ce6e9c08111/687ab3f89146fe6e246a6bd9/MoPLaunch_Masthead.jpg?imwidth=1920"
+    },
+    {
+      "path": "hero/masthead-mobile.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt899f0e8bcf66f5e5/687e8e8881016172286c03d1/MoPLAunch_960_Masthead.jpg?imwidth=960"
+    },
+    {
+      "path": "brand/logo.png",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltffc20bbc4caf8c3b/679d43c9bf086a4164b3ec5a/kazoo-logo.png?imwidth=1296"
+    },
+    {
+      "path": "social/og.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt159727d267850a4b/67acf380ad44ef0e80ce63aa/Open_Graph_-_KazooENUS.jpg?imwidth=1200"
+    },
+    {
+      "path": "icons/scenarios.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltf916218a56537d3a/67a561e64cbae172ab29e07d/Scenarios_icon.jpg?imwidth=320"
+    },
+    {
+      "path": "icons/pets.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltfdd44db846900680/67a56311f3d5093cc41fcfd1/Pet_icon.jpg?imwidth=320"
+    },
+    {
+      "path": "icons/challenges.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt210178cf659252ae/67a56293e4c8de205d3cd910/Challenge_icon.jpg?imwidth=320"
+    },
+    {
+      "path": "icons/dungeons.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt3c24b594cf512751/67a560170f59af55e84f340a/Dungeon_icon.jpg?imwidth=320"
+    },
+    {
+      "path": "icons/pandaren.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt5c3a92cdd5cad709/67a55efdf3d50936201fcfc1/pandaren_icon.jpg?imwidth=320"
+    },
+    {
+      "path": "panels/features.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt611f1d0a78c01f29/67a5166bc32f471710823502/2600_Features.jpg?imwidth=1920"
+    },
+    {
+      "path": "panels/faqs.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltddafba47ef9f5286/67ae42d84cbae13b6929e168/1600_FAQs.jpg?imwidth=1920"
+    },
+    {
+      "path": "panels/footer.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt9a0f71c7451362a4/67a540ae00aa506949eeffae/1600_Footer.jpg?imwidth=1920"
+    },
+    {
+      "path": "textures/pane-dirt.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltc84f261fbf1df38b/66a95ecef86a4a0858e0ff5b/Pane-dirtLight.jpg?imwidth=1200"
+    },
+    {
+      "path": "cards/level-cap.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltdd74ec8dfd8f5cb1/67a56086b21737a9594b632f/New_Level_Cap.jpg?imwidth=1024"
+    },
+    {
+      "path": "cards/dungeons-and-raids.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt8d7dc10709a66e56/67a5633df593ce69dfebb074/New_Dungeons_&_Raids.jpg?imwidth=1024"
+    },
+    {
+      "path": "cards/celestial-difficulty.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt79ae68f31daf97ec/682e3b36ac64aff04957353a/Celestial_Dungeon_Difficulty.jpg?imwidth=1024"
+    },
+    {
+      "path": "cards/pre-patch.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt9316565afaf35aec/682e39da6ea2dd24ea217d46/Expanded_Pre-Patch_Content.jpg?imwidth=1024"
+    },
+    {
+      "path": "cards/alt-friendly.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt35661e1cd74a50a7/682e3a71e9dfeb9f25c93e80/Alt-Friendly_Improvements.jpg?imwidth=1024"
+    },
+    {
+      "path": "cards/pandaren.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/blt6e2d90eb794affaf/67a55e59711328265117ff6b/Pandaren.jpg?imwidth=1024"
+    },
+    {
+      "path": "cards/launch.jpg",
+      "url": "https://blz-contentstack-images.akamaized.net/v3/assets/blt3452e3b114fab0cd/bltf74731baba90651a/687abe94d9847bb21bed31b3/WoW_Classic_MoP_Launch_.jpg?imwidth=1024"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+---
+/** An alternating image-and-text block: the pattern the expansion pages repeat
+ *  down the length of the page. The `flip` prop is what produces the alternation;
+ *  the page decides, so a section can be moved without its neighbour's layout
+ *  changing underneath it. */
+interface Props {
+  title: string;
+  body: string;
+  image?: string;
+  flip?: boolean;
+}
+
+const { title, body, image, flip = false } = Astro.props;
+---
+
+<article class="border-b border-border last:border-b-0">
+  <div
+    class:list={[
+      'mx-auto grid max-w-measure items-center gap-10 px-4 py-16 md:grid-cols-2 md:py-24',
+      flip && 'md:[&>*:first-child]:order-2',
+    ]}
+  >
+    <div class={flip ? 'md:pl-6' : 'md:pr-6'}>
+      <h3 class="mb-4 mt-0 text-2xl uppercase tracking-wider text-highlight md:text-3xl">
+        {title}
+      </h3>
+      <p class="m-0 text-lg leading-relaxed text-muted">{body}</p>
+    </div>
+
+    {
+      image ? (
+        <img
+          src={image}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          class="w-full rounded-theme border border-border object-cover shadow-panel"
+        />
+      ) : (
+        /* Holds the column so the text does not stretch to full width when a
+           deployment has not supplied artwork for this panel. */
+        <div
+          aria-hidden="true"
+          class="aspect-[16/9] w-full rounded-theme border border-border bg-panel-texture bg-cover bg-center shadow-panel"
+        />
+      )
+    }
+  </div>
+</article>

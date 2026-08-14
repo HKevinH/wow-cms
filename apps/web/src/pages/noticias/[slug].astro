@@ -1,0 +1,23 @@
+---
+import NewsPostView from '../../views/NewsPostView.astro';
+import { fetchPost, listPostSlugs } from '../../lib/content';
+
+/** Prerendered, one file per post. The slug list comes from the API at build
+ *  time; a build with no API reachable still emits the sample posts, so the
+ *  links the front page renders always lead somewhere. */
+export async function getStaticPaths() {
+  const slugs = await listPostSlugs('es');
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await fetchPost(slug!, 'es');
+
+// A slug that existed when the list was fetched and not when the post was is a
+// race with the editor, not a routing bug. 404 is the honest answer.
+if (post === null) {
+  return new Response(null, { status: 404 });
+}
+---
+
+<NewsPostView locale="es" post={post} />

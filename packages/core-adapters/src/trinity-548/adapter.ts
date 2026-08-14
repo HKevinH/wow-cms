@@ -79,3 +79,51 @@ export async function verifyPassword(
   const found = (rows as Array<{ id: number }>)[0];
   return found ? found.id : null;
 }
+
+export interface AccountRow {
+  readonly id: number;
+  readonly username: string;
+  readonly email: string;
+}
+
+/** A page of accounts, for the administration list. Password material is never
+ *  selected: the CMS has no use for it and a column it never reads is a column it
+ *  cannot leak. */
+export async function listAccounts(
+  pool: Pool,
+  map: FieldMap,
+  options: { search?: string; limit: number; offset: number },
+): Promise<{ items: AccountRow[]; total: number }> {
+  const table = quoteIdentifier(map.accounts.table);
+  const idColumn = quoteIdentifier(map.accounts.id);
+  const usernameColumn = quoteIdentifier(map.accounts.username);
+  const emailColumn = quoteIdentifier(map.accounts.email);
+
+  const search = options.search?.trim();
+  const where = search ? `WHERE ${usernameColumn} LIKE ?` : '';
+  const params = search ? [`%${search.toUpperCase()}%`] : [];
+
+  // LIMIT and OFFSET are interpolated rather than bound because MySQL will not
+  // accept placeholders there in a prepared statement. They are coerced to
+  // integers first, which is what makes that safe.
+  const limit = Math.max(1, Math.min(200, Math.trunc(options.limit)));
+  const offset = Math.max(0, Math.trunc(options.offset));
+
+  const [rows] = await pool.execute(
+    `SELECT ${idColumn} AS id, ${usernameColumn} AS username, ${emailColumn} AS email
+     FROM ${table} ${where}
+     ORDER BY ${idColumn} DESC
+     LIMIT ${limit} OFFSET ${offset}`,
+    params,
+  );
+
+  const [counted] = await pool.execute(
+    `SELECT COUNT(*) AS total FROM ${table} ${where}`,
+    params,
+  );
+
+  return {
+    items: rows as AccountRow[],
+    total: Number((counted as Array<{ total: number }>)[0]?.total ?? 0),
+  };
+}

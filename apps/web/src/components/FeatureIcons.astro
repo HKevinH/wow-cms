@@ -1,0 +1,59 @@
+---
+/** The row of circular icons that sits directly under the masthead. Each entry
+ *  is a name, an icon and a line of copy; the component owns nothing else, so a
+ *  page decides which four of them to show. */
+export interface FeatureIcon {
+  icon?: string;
+  title: string;
+  body: string;
+}
+
+interface Props {
+  heading?: string;
+  items: FeatureIcon[];
+}
+
+const { heading, items } = Astro.props;
+---
+
+<section class="border-b border-border bg-surface/60">
+  <div class="mx-auto max-w-measure px-4 py-14 md:py-20">
+    {
+      heading && (
+        <h2 class="mb-10 mt-0 text-center text-2xl uppercase tracking-[0.2em] text-highlight">
+          {heading}
+        </h2>
+      )
+    }
+
+    <ul class="m-0 grid list-none gap-10 p-0 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        items.map((item) => (
+          <li class="text-center">
+            {item.icon ? (
+              <img
+                src={item.icon}
+                alt=""
+                aria-hidden="true"
+                width="96"
+                height="96"
+                loading="lazy"
+                class="mx-auto mb-5 h-24 w-24 rounded-full border border-border object-cover shadow-panel"
+              />
+            ) : (
+              /* No artwork configured: a ring keeps the rhythm of the row rather
+                 than collapsing it into a text list. */
+              <span
+                aria-hidden="true"
+                class="mx-auto mb-5 block h-24 w-24 rounded-full border border-accent/40 bg-surface-raised"
+              />
+            )}
+
+            <h3 class="mb-2 mt-0 text-base uppercase tracking-widest text-text">{item.title}</h3>
+            <p class="m-0 text-sm leading-relaxed text-muted">{item.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

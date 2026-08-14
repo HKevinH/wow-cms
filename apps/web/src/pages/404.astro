@@ -1,0 +1,23 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import Button from '../components/Button.astro';
+import { localeFromPath, path, useTranslations } from '../i18n';
+
+/** One 404 for the whole site, rendered in whichever language the path that
+ *  missed was written in. A Spanish reader who mistypes a URL should not be
+ *  answered in English. */
+export const prerender = false;
+
+const locale = localeFromPath(Astro.url.pathname);
+const t = useTranslations(locale);
+---
+
+<PublicLayout title={t('error.notFound.title')} locale={locale} showHeading={false}>
+  <h1 class="mb-4 mt-0 text-3xl md:text-4xl">{t('error.notFound.title')}</h1>
+  <p class="mb-10 mt-0 text-lg text-muted">{t('error.notFound.body')}</p>
+
+  <div class="flex flex-wrap gap-4">
+    <Button href={path('home', locale)}>{t('nav.home')}</Button>
+    <Button href={path('news', locale)} variant="outline">{t('nav.news')}</Button>
+  </div>
+</PublicLayout>

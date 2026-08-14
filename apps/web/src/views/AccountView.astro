@@ -1,0 +1,64 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import Button from '../components/Button.astro';
+import { hasPermission, type Viewer } from '@wowcms/contracts';
+import { path, useTranslations, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+  viewer: Viewer;
+}
+
+const { locale, viewer } = Astro.props;
+const t = useTranslations(locale);
+const canAdminister = hasPermission(viewer, 'admin.access');
+---
+
+<PublicLayout title={t('nav.account')} locale={locale}>
+  <div class="rounded-theme border border-border bg-surface p-6 shadow-panel">
+    <p class="m-0 text-xs uppercase tracking-widest text-muted">{t('register.username')}</p>
+    <p class="m-0 mt-1 font-display text-2xl text-highlight">{viewer.username}</p>
+
+    {
+      viewer.roles.length > 0 && (
+        <ul class="m-0 mt-5 flex list-none flex-wrap gap-2 p-0">
+          {viewer.roles.map((role) => (
+            <li class="rounded-theme border border-accent/40 px-3 py-1 text-xs uppercase tracking-widest text-accent">
+              {role}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+
+  <div class="mt-8 flex flex-wrap gap-4">
+    {canAdminister && <Button href="/admin">{t('nav.admin')}</Button>}
+    <Button href={path('connect', locale)} variant="outline">{t('nav.connect')}</Button>
+    <button
+      id="logout"
+      type="button"
+      class="rounded-theme border border-border px-5 py-2.5 text-sm font-semibold uppercase tracking-widest text-muted hover:border-danger hover:text-danger"
+      data-redirect={path('home', locale)}
+    >
+      {t('nav.logout')}
+    </button>
+  </div>
+</PublicLayout>
+
+<script>
+  import { apiFetch } from '../lib/api';
+
+  const button = document.querySelector<HTMLButtonElement>('#logout');
+
+  button?.addEventListener('click', async () => {
+    button.disabled = true;
+    try {
+      await apiFetch('/api/session', { method: 'DELETE' });
+    } finally {
+      // Whether or not the API managed to delete the row, this browser is done
+      // with the session; sending the reader on is the honest outcome either way.
+      window.location.assign(button.dataset.redirect ?? '/');
+    }
+  });
+</script>

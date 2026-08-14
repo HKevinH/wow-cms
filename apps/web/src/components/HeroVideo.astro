@@ -1,0 +1,162 @@
+---
+import Button from './Button.astro';
+import { getSiteConfig } from '../config/site';
+import { path, useTranslations, type Locale } from '../i18n';
+
+/** The masthead. A looping video with the logo over it, the shape the official
+ *  expansion pages have used since Legion.
+ *
+ *  Three fallbacks, in order: the poster shows while the video loads and stays if
+ *  it never plays; a reader who asked for reduced motion gets the poster and no
+ *  video element at all; a theme with no artwork configured falls through to the
+ *  gradient. The section has to look deliberate in all four states, which is why
+ *  the wash and the height do not depend on the artwork. */
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const { media } = getSiteConfig();
+const { sources, poster, posterMobile } = media.hero;
+const hasVideo = sources.length > 0;
+---
+
+<section
+  class="relative isolate flex min-h-[34rem] items-end overflow-hidden border-b border-border md:min-h-[44rem]"
+>
+  {
+    poster && (
+      <picture>
+        {posterMobile && <source media="(max-width: 48rem)" srcset={posterMobile} />}
+        <img
+          src={poster}
+          alt=""
+          aria-hidden="true"
+          class="absolute inset-0 -z-30 h-full w-full object-cover"
+        />
+      </picture>
+    )
+  }
+
+  {
+    hasVideo && (
+      <video
+        id="hero-video"
+        class="absolute inset-0 -z-20 h-full w-full object-cover motion-reduce:hidden"
+        autoplay
+        loop
+        muted
+        playsinline
+        preload="metadata"
+        poster={poster}
+        aria-hidden="true"
+        tabindex="-1"
+      >
+        {sources.map((source) => (
+          <source src={source.src} type={source.type} />
+        ))}
+      </video>
+    )
+  }
+
+  <!-- Two washes rather than one: the vertical fade seats the panel on the page,
+       the horizontal one keeps cream type readable over whatever the frame
+       happens to be showing at that moment. -->
+  <div
+    class="absolute inset-0 -z-10 bg-gradient-to-t from-bg via-bg/70 to-bg/20"
+    aria-hidden="true"
+  >
+  </div>
+  <div
+    class="absolute inset-0 -z-10 bg-gradient-to-r from-bg/90 via-bg/40 to-transparent"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="mx-auto w-full max-w-measure px-4 pb-16 pt-32 md:pb-24">
+    <div class="max-w-2xl">
+      {
+        media.logo ? (
+          <img
+            src={media.logo.src}
+            alt={media.logo.alt ?? ''}
+            width="520"
+            class="mb-8 w-full max-w-[26rem] drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)]"
+          />
+        ) : (
+          <p class="mb-3 font-display text-sm uppercase tracking-[0.35em] text-highlight">
+            {t('hero.eyebrow')}
+          </p>
+        )
+      }
+
+      <h1 class="mb-5 mt-0 text-4xl leading-[1.1] text-text drop-shadow-lg md:text-6xl">
+        {t('hero.title')}
+      </h1>
+      <p class="mb-9 max-w-xl text-lg text-text/90 drop-shadow md:text-xl">{t('hero.body')}</p>
+
+      <div class="flex flex-wrap gap-4">
+        <Button href={path('register', locale)} variant="purchase" size="lg">
+          {t('hero.primary')}
+        </Button>
+        <Button href={path('connect', locale)} variant="primary" size="lg">
+          {t('hero.secondary')}
+        </Button>
+      </div>
+
+      <p class="mt-8 text-sm text-muted">{t('hero.note')}</p>
+    </div>
+  </div>
+
+  {
+    hasVideo && (
+      <button
+        id="hero-video-toggle"
+        type="button"
+        class="absolute bottom-5 right-5 z-10 rounded-full border border-border bg-bg/70 px-3 py-2 text-xs text-muted backdrop-blur hover:text-accent motion-reduce:hidden"
+        aria-label={t('hero.pause')}
+        data-play-label={t('hero.replay')}
+      >
+        ❙❙
+      </button>
+    )
+  }
+</section>
+
+<script>
+  // Autoplay is a preference as much as a capability: a reader who wants the
+  // loop stopped should be able to stop it, and the choice should survive the
+  // next page. Nothing here runs if the video was never rendered.
+  const video = document.querySelector<HTMLVideoElement>('#hero-video');
+  const toggle = document.querySelector<HTMLButtonElement>('#hero-video-toggle');
+
+  if (video && toggle) {
+    const labels = { pause: toggle.getAttribute('aria-label') ?? '', play: '' };
+    // The play label is the pause label with the glyph swapped; both strings come
+    // from the dictionary through the data attributes below.
+    labels.play = toggle.dataset.playLabel ?? labels.pause;
+
+    const apply = (paused: boolean) => {
+      toggle.textContent = paused ? '▶' : '❙❙';
+      toggle.setAttribute('aria-label', paused ? labels.play : labels.pause);
+    };
+
+    if (localStorage.getItem('hero-video') === 'paused') {
+      video.pause();
+      apply(true);
+    }
+
+    toggle.addEventListener('click', () => {
+      if (video.paused) {
+        void video.play();
+        localStorage.removeItem('hero-video');
+        apply(false);
+      } else {
+        video.pause();
+        localStorage.setItem('hero-video', 'paused');
+        apply(true);
+      }
+    });
+  }
+</script>

@@ -1,0 +1,55 @@
+---
+import type { AdapterReport } from '@wowcms/contracts';
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import Alert from '../../components/Alert.astro';
+import { apiFetch } from '../../lib/api';
+export const prerender = false;
+
+// Fetched at build time for now; it becomes a session-guarded SSR route when the
+// dashboard gains authentication.
+let report: AdapterReport | null = null;
+let error: string | null = null;
+
+try {
+  report = await apiFetch<AdapterReport>('/api/diagnostics');
+} catch (cause) {
+  error = cause instanceof Error ? cause.message : 'Unable to reach the API.';
+}
+---
+
+<DashboardLayout title="Diagnostics">
+  {error && <Alert tone="danger">{error}</Alert>}
+
+  {
+    report && (
+      <dl>
+        <dt>Adapter</dt>
+        <dd>{report.adapterId}</dd>
+        <dt>Confidence</dt>
+        <dd>{report.score}</dd>
+        <dt>Capabilities</dt>
+        <dd>{report.capabilities.join(', ')}</dd>
+        <dt>Unavailable</dt>
+        <dd>{report.missing.join('; ') || 'nothing'}</dd>
+      </dl>
+    )
+  }
+</DashboardLayout>
+
+<style>
+  dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem var(--space);
+    margin: 0;
+  }
+
+  dt {
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+
+  dd {
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,25 @@
+---
+import PublicLayout from '../../layouts/PublicLayout.astro';
+import FormField from '../../components/FormField.astro';
+import Button from '../../components/Button.astro';
+import Alert from '../../components/Alert.astro';
+export const prerender = false;
+---
+<PublicLayout title="Administration login" description="Sign in with your game account.">
+  <form id="admin-login" class="rounded-theme border border-border bg-surface p-6 shadow-panel">
+    <FormField name="username" label="Username" required />
+    <FormField name="password" label="Password" type="password" required />
+    <Button type="submit">Sign in</Button>
+  </form>
+  <Alert id="result" tone="danger" />
+</PublicLayout>
+<script>
+  import { apiFetch } from '../../lib/api';
+  const form = document.querySelector<HTMLFormElement>('#admin-login');
+  const result = document.querySelector<HTMLElement>('#result');
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault(); if (!result) return; result.textContent = '';
+    try { await apiFetch('/api/session', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) }); window.location.assign('/admin/news'); }
+    catch (error) { result.textContent = error instanceof Error ? error.message : 'Unable to sign in.'; }
+  });
+</script>

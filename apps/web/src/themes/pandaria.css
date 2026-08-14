@@ -1,0 +1,72 @@
+/* Mists of Pandaria. Where 'blizzard' is the generic Classic chrome, this theme
+   is the expansion: jade for the action that costs nothing, imperial gold for
+   the one that costs money, and a ground somewhere between lacquered wood and
+   night mist.
+
+   It adds no variable the other themes lack. That is the point of shipping a
+   third theme at all — if a component had needed changing to support it, the
+   theme contract would not be real. */
+
+:root[data-site-theme='pandaria'] {
+  --color-bg: #07100e;
+  --color-surface: #0c1a17;
+  --color-surface-raised: #122620;
+  --color-text: #f4ead2;
+  --color-text-muted: #a6a08c;
+  --color-border: #2a4038;
+
+  /* Jade. The expansion's green is cooler and deeper than the Classic emerald;
+     pushed brighter it stops reading as Pandaria and starts reading as a form. */
+  --color-accent: #34a780;
+  --color-accent-text: #04140f;
+
+  /* Imperial gold, reserved for anything transactional. */
+  --color-highlight: #d9a441;
+  --color-highlight-text: #1a1204;
+
+  --color-danger: #d9705f;
+  --color-success: #6cc79b;
+
+  --radius: 3px;
+  --space: 1rem;
+  --measure: 82rem;
+
+  --font-body: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-display: 'Trajan Pro', 'Cinzel', 'Palatino Linotype', Georgia, serif;
+
+  /* The header is a lacquer wash rather than a flat bar; the site's whole
+     layered look comes from this and the page texture, no images required. */
+  --gradient-header: linear-gradient(180deg, rgba(9, 26, 22, 0.94) 0%, rgba(5, 12, 10, 0.88) 100%);
+  --texture-page: radial-gradient(ellipse at 50% -20%, #133029 0%, #07100e 55%);
+  --shadow-panel:
+    0 1px 0 rgba(244, 234, 210, 0.06), 0 14px 40px rgba(0, 0, 0, 0.6);
+
+  /* Theme-owned artwork. Components read these rather than naming a file, so a
+     theme that ships no artwork simply leaves them unset and the gradients show
+     through. Paths point at what 'pnpm media:fetch' writes. */
+  --texture-panel: url('/media/remote/textures/pane-dirt.jpg');
+  --image-panel-band: url('/media/remote/panels/features.jpg');
+  --image-faq-band: url('/media/remote/panels/faqs.jpg');
+  --image-footer-band: url('/media/remote/panels/footer.jpg');
+}
+
+:root[data-site-theme='pandaria'][data-theme='light'] {
+  --color-bg: #efe7d4;
+  --color-surface: #f8f2e4;
+  --color-surface-raised: #fffdf6;
+  --color-text: #17241f;
+  --color-text-muted: #56635a;
+  --color-border: #c9bfa4;
+
+  --color-accent: #0f6b4d;
+  --color-accent-text: #ffffff;
+  --color-highlight: #8a5c0c;
+  --color-highlight-text: #ffffff;
+
+  --color-danger: #9c2f1d;
+  --color-success: #196239;
+
+  --gradient-header: linear-gradient(180deg, rgba(248, 242, 228, 0.95) 0%, rgba(239, 231, 212, 0.9) 100%);
+  --texture-page: radial-gradient(ellipse at 50% -20%, #fbf6ea 0%, #efe7d4 55%);
+  --shadow-panel: 0 1px 0 rgba(0, 0, 0, 0.04), 0 10px 28px rgba(60, 70, 55, 0.14);
+}

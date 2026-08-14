@@ -1,0 +1,52 @@
+---
+/** A line of text meant to be pasted somewhere else — the realmlist, mostly.
+ *  Selectable and readable without script; the button is a convenience on top,
+ *  and it hides itself if the clipboard API is not there rather than sitting
+ *  around doing nothing when pressed. */
+interface Props {
+  value: string;
+  copyLabel: string;
+  copiedLabel: string;
+}
+
+const { value, copyLabel, copiedLabel } = Astro.props;
+---
+
+<div
+  class="flex flex-wrap items-center gap-3 rounded-theme border border-border bg-surface-raised px-4 py-3"
+>
+  <code class="flex-1 select-all break-all font-mono text-sm text-highlight">{value}</code>
+  <button
+    type="button"
+    class="copy-line rounded-theme border border-border px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-muted hover:border-accent hover:text-accent"
+    data-value={value}
+    data-copied={copiedLabel}
+    hidden
+  >
+    {copyLabel}
+  </button>
+</div>
+
+<script>
+  // Shown only once we know it can work. Every instance on the page is wired the
+  // same way, so a page may render as many of these as it needs.
+  if (navigator.clipboard) {
+    for (const button of document.querySelectorAll<HTMLButtonElement>('.copy-line')) {
+      button.hidden = false;
+
+      button.addEventListener('click', async () => {
+        const original = button.textContent;
+        try {
+          await navigator.clipboard.writeText(button.dataset.value ?? '');
+          button.textContent = button.dataset.copied ?? original;
+          setTimeout(() => {
+            button.textContent = original;
+          }, 2000);
+        } catch {
+          // Clipboard access can be refused by permission policy. The text is
+          // still selectable, so there is nothing useful to report.
+        }
+      });
+    }
+  }
+</script>

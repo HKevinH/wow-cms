@@ -1,0 +1,15 @@
+{
+  "name": "@wowcms/module-media",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@nestjs/common": "^10.4.0",
+    "@wowcms/contracts": "workspace:*",
+    "@wowcms/module-auth": "workspace:*",
+    "@wowcms/module-sdk": "workspace:*",
+    "@wowcms/platform-db": "workspace:*",
+    "mysql2": "^3.11.0"
+  }
+}

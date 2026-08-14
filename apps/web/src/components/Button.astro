@@ -1,0 +1,41 @@
+---
+/** Two accents, two intents. 'primary' is the action that costs nothing;
+ *  'purchase' is the one that costs money. Naming them by intent rather than by
+ *  colour keeps pages from having to know which theme is running. */
+interface Props {
+  type?: 'button' | 'submit';
+  href?: string;
+  variant?: 'primary' | 'purchase' | 'outline';
+  size?: 'md' | 'lg';
+}
+
+const { type = 'button', href, variant = 'primary', size = 'md' } = Astro.props;
+
+const base =
+  'inline-block rounded-theme font-semibold uppercase tracking-widest transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text';
+
+const sizes = {
+  md: 'px-5 py-2.5 text-sm',
+  lg: 'px-8 py-4 text-base',
+}[size];
+
+const variants = {
+  primary: 'bg-accent text-accent-text hover:brightness-110',
+  purchase: 'bg-highlight text-highlight-text hover:brightness-110',
+  outline: 'border border-border text-text hover:border-accent hover:text-accent',
+}[variant];
+
+const className = `${base} ${sizes} ${variants}`;
+---
+
+{
+  href ? (
+    <a href={href} class={className}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={className}>
+      <slot />
+    </button>
+  )
+}

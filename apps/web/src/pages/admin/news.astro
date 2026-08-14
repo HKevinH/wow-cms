@@ -1,0 +1,25 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+export const prerender = false;
+---
+<DashboardLayout title="News">
+  <p class="text-muted">Create and manage published news posts.</p>
+  <form id="news-form" class="grid gap-3 rounded-theme border border-border bg-surface p-6">
+    <input name="title" placeholder="Title" required class="rounded border p-2" />
+    <input name="slug" placeholder="slug" class="rounded border p-2" />
+    <select name="locale" class="rounded border p-2"><option value="es">Español</option><option value="en">English</option></select>
+    <input name="category" placeholder="Category" class="rounded border p-2" />
+    <textarea name="excerpt" placeholder="Excerpt" class="rounded border p-2"></textarea>
+    <textarea name="body" placeholder="Markdown body" required class="min-h-48 rounded border p-2"></textarea>
+    <label><input type="checkbox" name="published" /> Published</label>
+    <button class="rounded bg-accent px-4 py-2">Create post</button>
+  </form>
+  <div id="news-list" class="mt-6 grid gap-2"></div>
+</DashboardLayout>
+<script>
+  import { apiFetch } from '../../lib/api';
+  const list = document.querySelector<HTMLElement>('#news-list');
+  const load = async () => { if (!list) return; const page = await apiFetch<{items: {title:string; locale:string; publishedAt:string|null}[]}>('/api/m/content/news?limit=100'); list.innerHTML = page.items.map((p) => `<article class="rounded border p-3"><strong>${p.title}</strong> <small>${p.locale} · ${p.publishedAt ? 'published' : 'draft'}</small></article>`).join(''); };
+  document.querySelector<HTMLFormElement>('#news-form')?.addEventListener('submit', async (e) => { e.preventDefault(); const form = e.currentTarget as HTMLFormElement; const data = Object.fromEntries(new FormData(form)); await apiFetch('/api/m/content/news', { method: 'POST', body: JSON.stringify({...data, published: data.published === 'on', coverUrl: null}) }); form.reset(); await load(); });
+  load();
+</script>

@@ -1,0 +1,56 @@
+---
+import { LOCALES, translatePath, type Locale } from '../i18n';
+import { getSiteConfig } from '../config/site';
+
+/** Every tag that describes the page to a crawler or a share card lives here, so
+ *  no page has to remember the list and none of them drift apart. */
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  locale: Locale;
+  /** Share card artwork. Falls back to the site's default. */
+  image?: string;
+  /** Admin pages must never be indexed, whatever a crawler is told elsewhere. */
+  noindex?: boolean;
+}
+
+const { title, description, canonical, locale, image, noindex = false } = Astro.props;
+const site = getSiteConfig();
+const fullTitle = `${title} — ${site.name}`;
+
+// Absolute, because a share card is fetched by a machine that has no idea what
+// our origin is. Astro.site is unset in dev, so the current URL stands in.
+const origin = Astro.site?.origin ?? Astro.url.origin;
+const shareImage = image ?? site.media.social;
+const shareImageUrl = shareImage ? new URL(shareImage, origin).href : undefined;
+
+// Every locale's version of this page, so a Spanish reader is not handed the
+// English result and vice versa.
+const alternates = noindex
+  ? []
+  : LOCALES.map((other) => ({
+      locale: other,
+      href: new URL(translatePath(Astro.url.pathname, other), origin).href,
+    }));
+---
+
+<title>{fullTitle}</title>
+{description && <meta name="description" content={description} />}
+{canonical && <link rel="canonical" href={canonical} />}
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+{
+  alternates.map((alternate) => (
+    <link rel="alternate" hreflang={alternate.locale} href={alternate.href} />
+  ))
+}
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:locale" content={locale === 'es' ? 'es_ES' : 'en_GB'} />
+{description && <meta property="og:description" content={description} />}
+{shareImageUrl && <meta property="og:image" content={shareImageUrl} />}
+
+<meta name="twitter:card" content={shareImageUrl ? 'summary_large_image' : 'summary'} />

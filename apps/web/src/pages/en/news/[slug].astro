@@ -1,0 +1,18 @@
+---
+import NewsPostView from '../../../views/NewsPostView.astro';
+import { fetchPost, listPostSlugs } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const slugs = await listPostSlugs('en');
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await fetchPost(slug!, 'en');
+
+if (post === null) {
+  return new Response(null, { status: 404 });
+}
+---
+
+<NewsPostView locale="en" post={post} />

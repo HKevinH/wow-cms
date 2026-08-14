@@ -1,0 +1,73 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import CopyLine from '../components/CopyLine.astro';
+import Faq from '../components/Faq.astro';
+import Button from '../components/Button.astro';
+import { getSiteConfig } from '../config/site';
+import { path, useTranslations, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const site = getSiteConfig();
+
+const steps = [
+  { title: t('connect.step1.title'), body: t('connect.step1.body') },
+  { title: t('connect.step2.title'), body: t('connect.step2.body'), realmlist: true },
+  { title: t('connect.step3.title'), body: t('connect.step3.body') },
+];
+
+const faq = [
+  { question: t('faq.client.q'), answer: t('faq.client.a') },
+  { question: t('faq.account.q'), answer: t('faq.account.a') },
+  { question: t('faq.password.q'), answer: t('faq.password.a') },
+  { question: t('faq.rates.q'), answer: t('faq.rates.a') },
+];
+---
+
+<PublicLayout title={t('connect.title')} description={t('connect.intro')} locale={locale} bare>
+  <div class="mx-auto max-w-3xl px-4 py-14 md:py-20">
+    <h1 class="mb-4 mt-0 text-3xl uppercase tracking-[0.15em] md:text-4xl">{t('connect.title')}</h1>
+    <p class="mb-12 mt-0 text-lg text-muted">{t('connect.intro')}</p>
+
+    <ol class="m-0 flex list-none flex-col gap-8 p-0">
+      {
+        steps.map((step, index) => (
+          <li class="flex gap-5 rounded-theme border border-border bg-surface p-6 shadow-panel">
+            <span
+              aria-hidden="true"
+              class="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-accent/50 font-display text-lg text-accent"
+            >
+              {index + 1}
+            </span>
+            <div class="flex-1">
+              <h2 class="mb-2 mt-0 text-lg uppercase tracking-wider text-highlight">{step.title}</h2>
+              <p class="m-0 leading-relaxed text-muted">{step.body}</p>
+              {step.realmlist && (
+                <div class="mt-4">
+                  <CopyLine
+                    value={site.realmlist}
+                    copyLabel={t('connect.copy')}
+                    copiedLabel={t('connect.copied')}
+                  />
+                </div>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="mt-12 flex flex-wrap gap-4">
+      <Button href={path('register', locale)} variant="purchase" size="lg">
+        {t('nav.register')}
+      </Button>
+      <Button href={path('status', locale)} variant="outline" size="lg">{t('nav.status')}</Button>
+    </p>
+  </div>
+
+  <Faq heading={t('connect.faq')} entries={faq} />
+</PublicLayout>

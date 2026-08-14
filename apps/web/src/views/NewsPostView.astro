@@ -1,0 +1,64 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import Button from '../components/Button.astro';
+import type { NewsPost } from '@wowcms/contracts';
+import { renderMarkdown, plainExcerpt } from '../lib/markdown';
+import { formatDate, path, useTranslations, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+  post: NewsPost;
+}
+
+const { locale, post } = Astro.props;
+const t = useTranslations(locale);
+const html = renderMarkdown(post.body);
+const description = post.excerpt || plainExcerpt(post.body);
+---
+
+<PublicLayout
+  title={post.title}
+  description={description}
+  locale={locale}
+  image={post.coverUrl ?? undefined}
+  bare
+>
+  <article class="mx-auto max-w-3xl px-4 py-14 md:py-20">
+    <p class="mb-4 mt-0">
+      <a href={path('news', locale)} class="text-sm text-muted no-underline hover:text-accent">
+        ← {t('news.back')}
+      </a>
+    </p>
+
+    <p class="mb-3 font-display text-xs uppercase tracking-[0.3em] text-accent">{post.category}</p>
+    <h1 class="mb-4 mt-0 text-3xl leading-tight md:text-5xl">{post.title}</h1>
+
+    {
+      post.publishedAt && (
+        <p class="m-0 text-sm text-muted">
+          {t('news.published')}{' '}
+          <time datetime={post.publishedAt}>{formatDate(post.publishedAt, locale)}</time>
+        </p>
+      )
+    }
+
+    {
+      post.coverUrl && (
+        <img
+          src={post.coverUrl}
+          alt=""
+          aria-hidden="true"
+          class="mt-8 w-full rounded-theme border border-border object-cover shadow-panel"
+        />
+      )
+    }
+
+    <!-- The body is Markdown rendered to plain tags; .prose is where their spacing
+         is defined, once, for both this page and the admin preview. -->
+    <div class="prose mt-10 text-lg leading-relaxed text-muted" set:html={html} />
+
+    <p class="mt-14">
+      <Button href={path('news', locale)} variant="outline">{t('news.back')}</Button>
+    </p>
+  </article>
+</PublicLayout>

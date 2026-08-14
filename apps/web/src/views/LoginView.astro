@@ -1,0 +1,68 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import FormField from '../components/FormField.astro';
+import Button from '../components/Button.astro';
+import Alert from '../components/Alert.astro';
+import { path, useTranslations, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+  /** Where to send the reader once they are in. The admin login funnels through
+   *  this same page, which is why the destination is a prop and not a constant. */
+  redirectTo?: string;
+}
+
+const { locale, redirectTo } = Astro.props;
+const t = useTranslations(locale);
+const destination = redirectTo ?? path('account', locale);
+---
+
+<PublicLayout title={t('login.title')} description={t('login.description')} locale={locale}>
+  <p class="mb-8 mt-0 text-lg text-muted">{t('login.description')}</p>
+
+  <form
+    id="login"
+    class="rounded-theme border border-border bg-surface p-6 shadow-panel"
+    data-redirect={destination}
+    data-fallback={t('login.error')}
+  >
+    <FormField name="username" label={t('register.username')} required maxlength={32} />
+    <FormField name="password" label={t('register.password')} type="password" required />
+    <Button type="submit">{t('login.submit')}</Button>
+  </form>
+
+  <Alert id="result" tone="danger" />
+
+  <p class="mt-8 text-sm text-muted">
+    {t('login.noAccount')}{' '}
+    <a href={path('register', locale)} class="font-semibold">{t('nav.register')}</a>
+  </p>
+</PublicLayout>
+
+<script>
+  import { apiFetch } from '../lib/api';
+
+  const form = document.querySelector<HTMLFormElement>('#login');
+  const result = document.querySelector<HTMLElement>('#result');
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!result) return;
+    result.textContent = '';
+
+    const data = Object.fromEntries(new FormData(form));
+    const submit = form.querySelector('button[type="submit"]');
+    submit?.setAttribute('disabled', 'true');
+
+    try {
+      // The session comes back as an HttpOnly cookie, so there is nothing to keep
+      // here — a plain navigation is enough and the next page sees the session.
+      await apiFetch('/api/session', { method: 'POST', body: JSON.stringify(data) });
+      window.location.assign(form.dataset.redirect ?? '/');
+    } catch (error) {
+      result.textContent =
+        error instanceof Error ? error.message : (form.dataset.fallback ?? '');
+      submit?.removeAttribute('disabled');
+    }
+  });
+</script>

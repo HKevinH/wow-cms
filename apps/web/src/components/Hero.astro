@@ -1,0 +1,56 @@
+---
+import Button from './Button.astro';
+
+/** The full-bleed opening panel. The artwork is a slot rather than a bundled
+ *  asset: the official imagery belongs to Blizzard, so a deployment points this
+ *  at its own screenshot and the layout holds regardless of what lands there. */
+interface Props {
+  eyebrow: string;
+  title: string;
+  body: string;
+  /** Background artwork. Falls back to the theme gradient when absent. */
+  image?: string;
+  note?: string;
+}
+
+const { eyebrow, title, body, image, note } = Astro.props;
+---
+
+<section class="relative isolate overflow-hidden border-b border-border">
+  {
+    image && (
+      <img
+        src={image}
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 -z-20 h-full w-full object-cover"
+      />
+    )
+  }
+
+  <!-- Darkening wash so cream type stays readable over any screenshot. -->
+  <div
+    class="absolute inset-0 -z-10 bg-gradient-to-r from-bg via-bg/85 to-bg/40"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="mx-auto grid max-w-measure gap-8 px-4 py-24 md:py-32">
+    <div class="max-w-2xl">
+      <p class="mb-3 font-display text-sm uppercase tracking-[0.35em] text-highlight">
+        {eyebrow}
+      </p>
+      <h1 class="mb-5 mt-0 text-4xl leading-tight text-text md:text-6xl">
+        {title}
+      </h1>
+      <p class="mb-9 max-w-xl text-lg text-muted">{body}</p>
+
+      <div class="flex flex-wrap gap-4">
+        <Button href="/register" variant="purchase" size="lg">Create account</Button>
+        <Button href="/download" variant="primary" size="lg">How to connect</Button>
+      </div>
+
+      {note && <p class="mt-8 text-sm text-muted">{note}</p>}
+    </div>
+  </div>
+</section>

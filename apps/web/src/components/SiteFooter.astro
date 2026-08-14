@@ -1,0 +1,94 @@
+---
+import { getSiteConfig } from '../config/site';
+import { path, useTranslations, type Locale, type RouteName } from '../i18n';
+
+/** The foot of every public page. It carries the non-affiliation notice, which is
+ *  the reason it is a component rather than markup in the layout: that notice has
+ *  to appear on every page this CMS ever renders, and a copy of it in each layout
+ *  is a copy that can be forgotten. */
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const site = getSiteConfig();
+const year = new Date().getFullYear();
+
+const sections: { route: RouteName; label: string }[] = [
+  { route: 'news', label: t('nav.news') },
+  { route: 'connect', label: t('nav.connect') },
+  { route: 'status', label: t('nav.status') },
+  { route: 'register', label: t('nav.register') },
+];
+
+const external = [
+  { href: site.links.discord, label: 'Discord' },
+  { href: site.links.rules, label: t('footer.rules') },
+  { href: site.links.contact, label: t('footer.contact') },
+].filter((link): link is { href: string; label: string } => Boolean(link.href));
+---
+
+<footer class="band mt-auto border-t border-border bg-footer-band">
+  <div class="mx-auto grid max-w-measure gap-10 px-4 py-14 md:grid-cols-[2fr_1fr_1fr]">
+    <div>
+      {
+        site.media.logo && (
+          <img
+            src={site.media.logo.src}
+            alt={site.name}
+            width="160"
+            loading="lazy"
+            class="mb-4 h-10 w-auto"
+          />
+        )
+      }
+      <p class="m-0 font-display text-lg uppercase tracking-widest text-text">{site.name}</p>
+      <p class="m-0 mt-3 max-w-md text-sm leading-relaxed text-muted">
+        {t('footer.notAffiliated')}
+      </p>
+      <p class="m-0 mt-3 text-sm text-muted">© {year} {site.name}</p>
+    </div>
+
+    <nav aria-label={t('nav.menu')}>
+      <h2 class="mb-3 mt-0 text-xs uppercase tracking-[0.2em] text-highlight">{site.name}</h2>
+      <ul class="m-0 flex list-none flex-col gap-2 p-0">
+        {
+          sections.map((section) => (
+            <li>
+              <a
+                href={path(section.route, locale)}
+                class="text-sm text-muted no-underline hover:text-accent"
+              >
+                {section.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    {
+      external.length > 0 && (
+        <nav aria-label={t('footer.legal')}>
+          <h2 class="mb-3 mt-0 text-xs uppercase tracking-[0.2em] text-highlight">
+            {t('footer.legal')}
+          </h2>
+          <ul class="m-0 flex list-none flex-col gap-2 p-0">
+            {external.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  rel="noopener noreferrer"
+                  class="text-sm text-muted no-underline hover:text-accent"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </div>
+</footer>

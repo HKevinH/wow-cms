@@ -1,0 +1,28 @@
+---
+/** Status and error messages. Uses role="status" so a screen reader announces
+ *  the result of a form submission without the reader having to hunt for it.
+ *  Hidden while empty, so pages can render it up front and fill it later. */
+interface Props {
+  tone?: 'info' | 'success' | 'danger';
+  id?: string;
+}
+
+const { tone = 'info', id } = Astro.props;
+
+const tones = {
+  info: 'text-text',
+  success: 'text-success',
+  danger: 'text-danger',
+};
+---
+
+<p
+  id={id}
+  role="status"
+  class:list={[
+    'mt-4 rounded-theme border border-border bg-surface px-4 py-3 empty:hidden',
+    tones[tone],
+  ]}
+>
+  <slot />
+</p>

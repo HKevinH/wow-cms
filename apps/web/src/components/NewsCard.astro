@@ -1,0 +1,70 @@
+---
+import type { NewsSummary } from '@wowcms/contracts';
+import { formatDate, postPath, useTranslations, type Locale } from '../i18n';
+
+/** A single news entry. Presentation only: it takes the summary shape the content
+ *  module returns, so wiring the API in later means passing real data to this
+ *  same component rather than rewriting the page around it. */
+interface Props {
+  item: NewsSummary;
+  locale: Locale;
+  /** The lead card on the index runs wider and shows its cover. */
+  featured?: boolean;
+}
+
+const { item, locale, featured = false } = Astro.props;
+const t = useTranslations(locale);
+const href = postPath(item.slug, locale);
+---
+
+<article
+  class:list={[
+    'group flex flex-col overflow-hidden rounded-theme border border-border bg-surface shadow-panel transition hover:border-accent/60',
+    featured && 'md:col-span-2 md:flex-row',
+  ]}
+>
+  {
+    item.coverUrl && (
+      <a href={href} class:list={['block shrink-0', featured && 'md:w-1/2']} tabindex="-1">
+        <img
+          src={item.coverUrl}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          class:list={[
+            'w-full object-cover transition duration-500 group-hover:scale-105',
+            featured ? 'h-56 md:h-full' : 'h-44',
+          ]}
+        />
+      </a>
+    )
+  }
+
+  <div class="flex flex-1 flex-col">
+    <div class="flex items-center gap-3 border-b border-border px-5 py-3">
+      <span class="font-display text-xs uppercase tracking-widest text-accent">
+        {item.category}
+      </span>
+      {
+        item.publishedAt && (
+          <time datetime={item.publishedAt} class="ml-auto text-xs text-muted">
+            {formatDate(item.publishedAt, locale)}
+          </time>
+        )
+      }
+    </div>
+
+    <div class="flex flex-1 flex-col gap-2 px-5 py-4">
+      <h3 class:list={['leading-snug', featured ? 'text-2xl' : 'text-lg']}>
+        <!-- The whole card is the target, but the anchor stays on the heading so
+             the accessible name of the link is the headline and not the excerpt
+             as well. -->
+        <a href={href} class="text-text no-underline group-hover:text-accent">{item.title}</a>
+      </h3>
+      <p class="m-0 text-sm leading-relaxed text-muted">{item.excerpt}</p>
+      <p class="m-0 mt-auto pt-3 text-xs font-semibold uppercase tracking-widest text-accent">
+        <a href={href} class="no-underline" tabindex="-1" aria-hidden="true">{t('news.readMore')}</a>
+      </p>
+    </div>
+  </div>
+</article>

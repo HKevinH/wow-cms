@@ -1,0 +1,58 @@
+/* A plain theme that follows the reader's system preference. It exists so the
+   theming layer is exercised by two genuinely different looks rather than one
+   dressed up, which is how the abstraction stays honest. */
+
+:root[data-site-theme='minimal'] {
+  --color-bg: #f7f7f8;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-text: #1b1b1f;
+  --color-text-muted: #5c5c66;
+  --color-border: #d8d8e0;
+  --color-accent: #7b4bd8;
+  --color-accent-text: #ffffff;
+  --color-danger: #b3261e;
+  --color-success: #1c6b3c;
+
+  --radius: 8px;
+  --space: 1rem;
+  --measure: 64rem;
+
+  --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-body);
+
+  --texture-page: none;
+  --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* Default setting is "system", which stamps no data-theme, so the media query is
+   what separates light from dark there. Guarded so an explicit light choice
+   still wins under a dark OS. */
+@media (prefers-color-scheme: dark) {
+  :root[data-site-theme='minimal']:not([data-theme='light']) {
+    --color-bg: #131317;
+    --color-surface: #1c1c22;
+    --color-surface-raised: #24242c;
+    --color-text: #ececf1;
+    --color-text-muted: #a0a0ad;
+    --color-border: #34343f;
+    --color-accent: #a98cf0;
+    --color-accent-text: #16161a;
+    --color-danger: #f2b8b5;
+    --color-success: #7fd6a2;
+  }
+}
+
+/* An explicit choice wins in both directions. */
+:root[data-site-theme='minimal'][data-theme='dark'] {
+  --color-bg: #131317;
+  --color-surface: #1c1c22;
+  --color-surface-raised: #24242c;
+  --color-text: #ececf1;
+  --color-text-muted: #a0a0ad;
+  --color-border: #34343f;
+  --color-accent: #a98cf0;
+  --color-accent-text: #16161a;
+  --color-danger: #f2b8b5;
+  --color-success: #7fd6a2;
+}

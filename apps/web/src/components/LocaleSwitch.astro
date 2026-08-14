@@ -1,0 +1,30 @@
+---
+import { LOCALES, LOCALE_LABELS, translatePath, useTranslations, type Locale } from '../i18n';
+
+/** Language links, rendered as links rather than a select so they are crawlable
+ *  and work without script. Each one points at this same page in the other
+ *  locale, which `translatePath` works out from the route table. */
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const others = LOCALES.filter((candidate) => candidate !== locale);
+---
+
+<nav aria-label={t('nav.language')} class="flex items-center gap-1">
+  {
+    others.map((other) => (
+      <a
+        href={translatePath(Astro.url.pathname, other)}
+        hreflang={other}
+        lang={other}
+        class="rounded-theme border border-border px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted no-underline hover:border-accent hover:text-accent"
+      >
+        <span class="sr-only">{LOCALE_LABELS[other]}</span>
+        <span aria-hidden="true">{other}</span>
+      </a>
+    ))
+  }
+</nav>

@@ -1,0 +1,33 @@
+---
+/** One labelled control. Pages describe what they need rather than repeating
+ *  label-and-input markup, so a change to how fields look happens in one file. */
+interface Props {
+  name: string;
+  label: string;
+  type?: 'text' | 'email' | 'password';
+  required?: boolean;
+  minlength?: number;
+  maxlength?: number;
+  hint?: string;
+}
+
+const { name, label, type = 'text', required = false, minlength, maxlength, hint } = Astro.props;
+const hintId = hint ? `${name}-hint` : undefined;
+---
+
+<p class="mb-4 flex flex-col gap-1">
+  <label for={name} class="text-sm font-semibold uppercase tracking-wider text-muted">
+    {label}
+  </label>
+  <input
+    id={name}
+    name={name}
+    type={type}
+    required={required}
+    minlength={minlength}
+    maxlength={maxlength}
+    aria-describedby={hintId}
+    class="rounded-theme border border-border bg-surface px-3 py-2 text-text outline-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/40"
+  />
+  {hint && <small id={hintId} class="text-muted">{hint}</small>}
+</p>

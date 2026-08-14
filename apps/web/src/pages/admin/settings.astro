@@ -1,0 +1,10 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+export const prerender = false;
+---
+<DashboardLayout title="Settings"><form id="settings-form" class="grid gap-3 rounded-theme border border-border bg-surface p-6"><div id="fields">Loading…</div><button class="rounded bg-accent px-4 py-2">Save settings</button></form></DashboardLayout>
+<script>
+  import { apiFetch } from '../../lib/api';
+  const form = document.querySelector<HTMLFormElement>('#settings-form'); const fields = document.querySelector<HTMLElement>('#fields');
+  const data = await apiFetch<{schema:{fields:{key:string;label:string}[]};values:Record<string,string>}>('/api/m/settings'); if (fields) fields.innerHTML = data.schema.fields.map((f) => `<label>${f.label}<input name="${f.key}" value="${data.values[f.key] ?? ''}" class="ml-2 rounded border p-2" /></label>`).join(''); form?.addEventListener('submit', async (e) => { e.preventDefault(); await apiFetch('/api/m/settings', { method: 'PUT', body: JSON.stringify(Object.fromEntries(new FormData(form))) }); });
+</script>
