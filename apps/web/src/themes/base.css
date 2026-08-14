@@ -36,6 +36,30 @@
     @apply font-display tracking-wide;
   }
 
+  /* Form controls sit on a light editing surface even when the site theme is
+     dark. Explicit colours are required because Tailwind preflight inherits
+     the cream page text, which makes values nearly invisible on white inputs. */
+  input,
+  textarea,
+  select {
+    color: #17241f;
+    background-color: #fff;
+    caret-color: #17241f;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #7a756b;
+    opacity: 1;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+
   /* Anchors inside prose keep the accent; chrome sets its own colours per link
      and would otherwise have to undo this on every one. */
   a {
