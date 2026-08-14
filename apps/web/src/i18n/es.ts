@@ -26,31 +26,50 @@ export const es = {
   'hero.replay': 'Repetir el vídeo',
   'hero.pause': 'Pausar el vídeo',
 
-  'features.title': 'Lo que te espera',
+  'adventure.eyebrow': 'Pandaria te espera',
+  'adventure.title': 'Tu aventura clásica continúa',
+  'adventure.body':
+    'Deja atrás el caos y descubre un continente perdido entre la niebla. Explora sus ruinas, reúne a tus aliados y defiende Pandaria de una amenaza que llevaba siglos esperando.',
+  'adventure.primary': 'Crear cuenta',
+  'adventure.secondary': 'Cómo conectar',
+  'adventure.imageAlt': 'Aventureros Pandaren preparados para explorar Pandaria',
+
+  'features.title': 'Características reseñables',
+  'features.description':
+    'Regresa a las místicas tierras de Pandaria, un mundo envuelto en niebla y misterio. Este antiguo reino vuelve con un renovado sentido de fascinación y aventura.',
   'features.scenarios.title': 'Escenarios',
   'features.scenarios.body': 'Aventuras instanciadas cortas para tres jugadores, sin buscar tanque.',
   'features.challenges.title': 'Modos desafío',
   'features.challenges.body': 'Mazmorras cronometradas con oro, plata y bronce, y monturas de recompensa.',
   'features.pets.title': 'Duelos de mascotas',
   'features.pets.body': 'Colecciona y combate con mascotas por todas las zonas de la expansión.',
-  'features.dungeons.title': 'Mazmorras y bandas',
-  'features.dungeons.body': 'De la Sien Celestial a Orgrimmar Asediado, con sus tres dificultades.',
+  'features.dungeons.title': 'Nuevas mazmorras, bandas y gestas',
+  'features.dungeons.body': 'Lucha en nuevas mazmorras de Pandaria, mazmorras heroicas rediseñadas, bandas y gestas.',
   'features.pandaren.title': 'Pandaren',
-  'features.pandaren.body': 'La raza neutral: elige facción al terminar la Isla Errante.',
+  'features.pandaren.body': 'Encarna a uno de los enigmáticos Pandaren y únete a la Horda o a la Alianza.',
+  'features.monk.title': 'Clase monje',
+  'features.monk.body': 'Aprende los poderes místicos del monje como viajero del viento, tejedor de niebla o maestro cervecero.',
+  'features.levelcap.title': 'Nuevo límite de nivel',
+  'features.levelcap.body': 'Defiende Azeroth y aprende nuevos talentos mientras avanzas hasta el nivel 90.',
+  'features.lands.title': 'Tierras nuevas y exuberantes',
+  'features.lands.body': 'Explora las nuevas zonas de Pandaria y la Isla Errante, el hogar de inicio de los Pandaren.',
 
   'panels.title': 'La expansión, completa',
   'panels.levelcap.title': 'Nivel máximo 90',
   'panels.levelcap.body':
-    'Cinco niveles nuevos repartidos por seis zonas, del Bosque de Jade a la Cima de Kun-Lai, con la progresión de reputación intacta.',
-  'panels.talents.title': 'Talentos y especializaciones rehechos',
-  'panels.talents.body':
-    'El árbol de talentos de 5.0: una elección cada quince niveles, y la especialización decide el resto. Nada de builds copiadas.',
-  'panels.timeless.title': 'La Isla Intemporal',
-  'panels.timeless.body':
-    'El contenido final del parche 5.4: raros a cielo abierto, cofres escondidos y equipo intemporal para tus alters.',
-  'panels.alts.title': 'Amable con los alters',
-  'panels.alts.body':
-    'Reputación compartida por cuenta, mazmorras de nivel máximo accesibles y tasas ajustadas para que un segundo personaje no sea un castigo.',
+    'Cinco niveles nuevos para explorar Pandaria y avanzar hasta el nivel 90.',
+  'panels.pandaren.title': 'Pandaren y monje',
+  'panels.pandaren.body':
+    'Conoce a los Pandaren, elige una facción al terminar la Isla Errante y domina la nueva clase de monje.',
+  'panels.dungeons.title': 'Mazmorras, bandas y gestas',
+  'panels.dungeons.body':
+    'Aventuras para grupos pequeños, nuevas mazmorras y bandas para recorrer la expansión completa.',
+  'panels.challenges.title': 'Mazmorras del modo desafío',
+  'panels.challenges.body':
+    'Compite contra el tiempo, mejora tu marca y consigue recompensas cosméticas por tu dominio de las mazmorras.',
+  'panels.lands.title': 'Nuevas tierras y contenido',
+  'panels.lands.body':
+    'Explora el Bosque de Jade, la Cima Kun-Lai, la Isla Intemporal y otras zonas de Pandaria.',
 
   'news.title': 'Últimas noticias',
   'news.all': 'Ver todas',

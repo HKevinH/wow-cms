@@ -27,31 +27,50 @@ export const en: Record<TranslationKey, string> = {
   'hero.replay': 'Replay the video',
   'hero.pause': 'Pause the video',
 
-  'features.title': 'What is waiting for you',
+  'adventure.eyebrow': 'Pandaria awaits',
+  'adventure.title': 'Your classic adventure continues',
+  'adventure.body':
+    'Leave the chaos behind and discover a continent lost in the mists. Explore its ruins, gather your allies and defend Pandaria from a threat that has waited for centuries.',
+  'adventure.primary': 'Create account',
+  'adventure.secondary': 'How to connect',
+  'adventure.imageAlt': 'Pandaren adventurers ready to explore Pandaria',
+
+  'features.title': 'Notable features',
+  'features.description':
+    'Return to the mist-shrouded lands of Pandaria, a realm of mystery and wonder returning with a renewed sense of adventure.',
   'features.scenarios.title': 'Scenarios',
   'features.scenarios.body': 'Short instanced adventures for three players, no tank to find.',
   'features.challenges.title': 'Challenge modes',
   'features.challenges.body': 'Timed dungeon runs for gold, silver and bronze, with mounts to earn.',
   'features.pets.title': 'Pet battles',
   'features.pets.body': 'Collect and duel battle pets across every zone in the expansion.',
-  'features.dungeons.title': 'Dungeons and raids',
-  'features.dungeons.body': 'From the Temple of the Jade Serpent to Siege of Orgrimmar, all three difficulties.',
+  'features.dungeons.title': 'New dungeons, raids and scenarios',
+  'features.dungeons.body': 'Fight through new Pandaria dungeons, redesigned heroic dungeons, raids and scenarios.',
   'features.pandaren.title': 'Pandaren',
-  'features.pandaren.body': 'The neutral race: pick your faction when you leave the Wandering Isle.',
+  'features.pandaren.body': 'Become one of the enigmatic Pandaren and join either the Horde or the Alliance.',
+  'features.monk.title': 'Monk class',
+  'features.monk.body': 'Master the mystical monk paths of the windwalker, mistweaver and brewmaster.',
+  'features.levelcap.title': 'New level cap',
+  'features.levelcap.body': 'Defend Azeroth and learn new talents as you advance all the way to level 90.',
+  'features.lands.title': 'New and lush lands',
+  'features.lands.body': 'Explore Pandaria\'s new zones and the Wandering Isle, the Pandaren starting area.',
 
   'panels.title': 'The whole expansion',
   'panels.levelcap.title': 'Level cap 90',
   'panels.levelcap.body':
-    'Five new levels across six zones, from the Jade Forest to Kun-Lai Summit, with reputation progression left as it shipped.',
-  'panels.talents.title': 'Rebuilt talents and specialisations',
-  'panels.talents.body':
-    'The 5.0 talent tree: one choice every fifteen levels, and your specialisation decides the rest. No copied builds.',
-  'panels.timeless.title': 'The Timeless Isle',
-  'panels.timeless.body':
-    'The last of patch 5.4: open-world rares, hidden chests and timeless gear for your alts.',
-  'panels.alts.title': 'Alt-friendly',
-  'panels.alts.body':
-    'Account-wide reputation, reachable max-level dungeons and rates tuned so a second character is not a punishment.',
+    'Five new levels to explore Pandaria and progress all the way to level 90.',
+  'panels.pandaren.title': 'Pandaren and monk',
+  'panels.pandaren.body':
+    'Meet the Pandaren, choose a faction after the Wandering Isle, and master the new monk class.',
+  'panels.dungeons.title': 'Dungeons, raids and scenarios',
+  'panels.dungeons.body':
+    'Group adventures, new dungeons and raids across the complete expansion.',
+  'panels.challenges.title': 'Challenge mode dungeons',
+  'panels.challenges.body':
+    'Race the clock, improve your time and earn cosmetic rewards by mastering each dungeon.',
+  'panels.lands.title': 'New lands and content',
+  'panels.lands.body':
+    'Explore the Jade Forest, Kun-Lai Summit, the Timeless Isle and other regions of Pandaria.',
 
   'news.title': 'Latest news',
   'news.all': 'All news',

@@ -1,0 +1,35 @@
+---
+import Button from './Button.astro';
+import { getSiteConfig } from '../config/site';
+import { path, useTranslations, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const { media } = getSiteConfig();
+---
+
+<section class="relative overflow-hidden border-y border-[#a98527] bg-[#031d12] text-text">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_72%_45%,rgba(0,92,53,.28),transparent_48%)]" aria-hidden="true"></div>
+  <div class="relative mx-auto grid max-w-measure items-center gap-12 px-4 py-16 md:grid-cols-[.8fr_1.2fr] md:py-24">
+    <div class="max-w-xl">
+      <p class="mb-3 font-serif text-lg font-semibold text-[#e6c888]">{t('adventure.eyebrow')}</p>
+      <h2 class="mb-6 mt-0 max-w-md font-serif text-5xl leading-[.98] text-[#f1d5a3] md:text-7xl">
+        {t('adventure.title')}
+      </h2>
+      <p class="mb-8 text-lg leading-relaxed text-white/85 md:text-xl">{t('adventure.body')}</p>
+      <div class="flex flex-wrap gap-4">
+        <Button href={path('register', locale)} variant="purchase" size="lg">{t('adventure.primary')}</Button>
+        <Button href={path('connect', locale)} variant="outline" size="lg">{t('adventure.secondary')}</Button>
+      </div>
+    </div>
+
+    <figure class="relative m-0 overflow-hidden border-2 border-[#b88a15] bg-black/30 shadow-[0_0_40px_rgba(0,0,0,.35)]">
+      <img src={media.cards.launch} alt={t('adventure.imageAlt')} loading="lazy" class="aspect-video w-full object-cover" />
+      <figcaption class="sr-only">{t('adventure.imageAlt')}</figcaption>
+    </figure>
+  </div>
+</section>

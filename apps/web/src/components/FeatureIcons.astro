@@ -10,26 +10,45 @@ export interface FeatureIcon {
 
 interface Props {
   heading?: string;
+  description?: string;
+  background?: string;
+  mobileBackground?: string;
   items: FeatureIcon[];
 }
 
-const { heading, items } = Astro.props;
+const { heading, description, background, mobileBackground, items } = Astro.props;
 ---
 
-<section class="border-b border-border bg-surface/60">
-  <div class="mx-auto max-w-measure px-4 py-14 md:py-20">
+<section
+  class="border-b border-border bg-[#430408] bg-cover bg-center"
+  style={background ? `--features-background: url('${background}'); --features-background-mobile: url('${mobileBackground ?? background}')` : undefined}
+>
+  <style>
+    section {
+      background-image: linear-gradient(rgba(67, 4, 8, .84), rgba(67, 4, 8, .92)), var(--features-background);
+    }
+
+    @media (max-width: 767px) {
+      section {
+        background-image: linear-gradient(rgba(67, 4, 8, .84), rgba(67, 4, 8, .92)), var(--features-background-mobile);
+      }
+    }
+  </style>
+  <div class="mx-auto max-w-measure px-4 py-16 md:py-24">
     {
       heading && (
-        <h2 class="mb-10 mt-0 text-center text-2xl uppercase tracking-[0.2em] text-highlight">
+        <h2 class="mb-5 mt-0 text-center font-serif text-4xl font-semibold tracking-wide text-[#f1d5a3] md:text-5xl">
           {heading}
         </h2>
       )
     }
 
-    <ul class="m-0 grid list-none gap-10 p-0 sm:grid-cols-2 lg:grid-cols-4">
+    {description && <p class="mx-auto mb-12 max-w-3xl text-center text-lg leading-relaxed text-white/90">{description}</p>}
+
+    <ul class="m-0 grid list-none gap-x-14 gap-y-12 p-0 md:grid-cols-2">
       {
         items.map((item) => (
-          <li class="text-center">
+          <li class="grid grid-cols-[3.5rem_1fr] items-start gap-4">
             {item.icon ? (
               <img
                 src={item.icon}
@@ -38,19 +57,21 @@ const { heading, items } = Astro.props;
                 width="96"
                 height="96"
                 loading="lazy"
-                class="mx-auto mb-5 h-24 w-24 rounded-full border border-border object-cover shadow-panel"
+                class="h-14 w-14 rounded-full border-2 border-[#d8a900] object-cover shadow-panel"
               />
             ) : (
               /* No artwork configured: a ring keeps the rhythm of the row rather
                  than collapsing it into a text list. */
               <span
                 aria-hidden="true"
-                class="mx-auto mb-5 block h-24 w-24 rounded-full border border-accent/40 bg-surface-raised"
+                class="block h-14 w-14 rounded-full border-2 border-[#d8a900] bg-black/20"
               />
             )}
 
-            <h3 class="mb-2 mt-0 text-base uppercase tracking-widest text-text">{item.title}</h3>
-            <p class="m-0 text-sm leading-relaxed text-muted">{item.body}</p>
+            <div>
+              <h3 class="mb-1 mt-0 font-serif text-xl font-semibold leading-tight text-[#f1d5a3]">{item.title}</h3>
+              <p class="m-0 text-base leading-relaxed text-white/90">{item.body}</p>
+            </div>
           </li>
         ))
       }

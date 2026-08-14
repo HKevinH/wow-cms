@@ -1,8 +1,8 @@
 ---
 import PublicLayout from '../layouts/PublicLayout.astro';
 import HeroVideo from '../components/HeroVideo.astro';
+import AdventureSection from '../components/AdventureSection.astro';
 import FeatureIcons from '../components/FeatureIcons.astro';
-import FeaturePanel from '../components/FeaturePanel.astro';
 import Faq from '../components/Faq.astro';
 import NewsCard from '../components/NewsCard.astro';
 import Button from '../components/Button.astro';
@@ -22,18 +22,15 @@ const t = useTranslations(locale);
 const { media } = getSiteConfig();
 const news = await fetchNews(locale, 3);
 
-const highlights = [
+const features = [
+  { icon: media.icons.pandaren, title: t('features.pandaren.title'), body: t('features.pandaren.body') },
+  { icon: media.cards.pandaren, title: t('features.monk.title'), body: t('features.monk.body') },
+  { icon: media.icons.dungeons, title: t('features.dungeons.title'), body: t('features.dungeons.body') },
+  { icon: media.cards.levelCap, title: t('features.levelcap.title'), body: t('features.levelcap.body') },
   { icon: media.icons.scenarios, title: t('features.scenarios.title'), body: t('features.scenarios.body') },
   { icon: media.icons.challenges, title: t('features.challenges.title'), body: t('features.challenges.body') },
   { icon: media.icons.pets, title: t('features.pets.title'), body: t('features.pets.body') },
-  { icon: media.icons.pandaren, title: t('features.pandaren.title'), body: t('features.pandaren.body') },
-];
-
-const panels = [
-  { title: t('panels.levelcap.title'), body: t('panels.levelcap.body'), image: media.cards.levelCap },
-  { title: t('panels.talents.title'), body: t('panels.talents.body'), image: media.cards.talents },
-  { title: t('panels.timeless.title'), body: t('panels.timeless.body'), image: media.cards.timeless },
-  { title: t('panels.alts.title'), body: t('panels.alts.body'), image: media.cards.alts },
+  { icon: media.cards.talents, title: t('features.lands.title'), body: t('features.lands.body') },
 ];
 
 const faq = [
@@ -47,12 +44,15 @@ const faq = [
 <PublicLayout title={t('nav.home')} description={t('hero.body')} locale={locale} bare>
   <HeroVideo locale={locale} />
 
-  <FeatureIcons heading={t('features.title')} items={highlights} />
+  <AdventureSection locale={locale} />
 
-  <section class="band bg-panel-band">
-    <h2 class="sr-only">{t('panels.title')}</h2>
-    {panels.map((panel, index) => <FeaturePanel {...panel} flip={index % 2 === 1} />)}
-  </section>
+  <FeatureIcons
+    heading={t('features.title')}
+    description={t('features.description')}
+    background={media.featuresBackground}
+    mobileBackground={media.featuresBackgroundMobile}
+    items={features}
+  />
 
   <section class="mx-auto max-w-measure px-4 py-16 md:py-24">
     <div class="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
