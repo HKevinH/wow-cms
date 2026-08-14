@@ -74,9 +74,17 @@ async function bootstrap(): Promise<void> {
   console.log(`API listening on ${await app.getUrl()} using adapter ${report.adapterId}`);
 }
 
+async function bootstrapInstaller(): Promise<void> {
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule.registerInstaller(), new FastifyAdapter());
+  await app.register(cookie);
+  app.enableCors({ origin: process.env.WOWCMS_WEB_ORIGIN ?? 'http://localhost:4321', credentials: true });
+  await app.listen(Number(process.env.PORT ?? 3001), '0.0.0.0');
+  console.log(`Installer API listening on ${await app.getUrl()}`);
+}
+
 // Startup failures must be loud: a platform that boots half-configured hides the
 // cause until someone opens the page that needed it.
-bootstrap().catch((error: unknown) => {
+(process.env.WOWCMS_INSTALLER_MODE === 'true' ? bootstrapInstaller() : bootstrap()).catch((error: unknown) => {
   console.error('API failed to start:', error);
   process.exit(1);
 });

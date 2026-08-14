@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+export const prerender = false;
+---
+<BaseLayout title="Install WoW CMS" description="Configure your WoW CMS installation.">
+  <main class="mx-auto max-w-2xl px-4 py-14">
+    <h1>Install WoW CMS</h1>
+    <p class="text-muted">Connect MySQL, create the CMS database and generate the initial configuration.</p>
+    <form id="installer" class="mt-8 grid gap-4 rounded-theme border border-border bg-surface p-6">
+      <label>MySQL admin URL<input name="mysqlAdminUrl" value="mysql://root:root@127.0.0.1:3306" required class="mt-1 w-full rounded border p-2" /></label>
+      <label>Auth database<input name="authDatabase" value="auth" required class="mt-1 w-full rounded border p-2" /></label>
+      <label>CMS database<input name="cmsDatabase" value="wowcms" required class="mt-1 w-full rounded border p-2" /></label>
+      <label>Web origin<input name="webOrigin" value="http://localhost:4321" required class="mt-1 w-full rounded border p-2" /></label>
+      <label>Site name<input name="siteName" value="WoW CMS" required class="mt-1 w-full rounded border p-2" /></label>
+      <button class="rounded bg-accent px-4 py-2">Install</button>
+      <p id="result" role="status"></p>
+    </form>
+  </main>
+</BaseLayout>
+<script>
+  import { apiFetch } from '../lib/api';
+  const form = document.querySelector<HTMLFormElement>('#installer');
+  const result = document.querySelector<HTMLElement>('#result');
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault(); if (!result) return; result.textContent = 'Installing…';
+    try { await apiFetch('/api/install', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) }); result.textContent = 'Installation complete. Restart the API without installer mode, then reload the site.'; }
+    catch (error) { result.textContent = error instanceof Error ? error.message : 'Installation failed.'; }
+  });
+</script>

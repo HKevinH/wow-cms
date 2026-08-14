@@ -10,6 +10,7 @@ import { MediaApiModule } from '@wowcms/module-media';
 import { SettingsApiModule } from '@wowcms/module-settings';
 import { DiagnosticsController } from './diagnostics/diagnostics.controller';
 import { PLATFORM_REPORTER } from './platform/platform.service';
+import { InstallerController } from './installer/installer.controller';
 
 export interface AppOptions {
   readonly pool: Pool;
@@ -20,6 +21,10 @@ export interface AppOptions {
 
 @Module({})
 export class AppModule {
+  static registerInstaller(): DynamicModule {
+    return { module: AppModule, controllers: [InstallerController] };
+  }
+
   static register(options: AppOptions): DynamicModule {
     const accounts = AccountsApiModule.register(options.pool, options.fieldMap);
     const auth = AuthApiModule.register({ emulatorPool: options.pool, fieldMap: options.fieldMap, cmsPool: options.cmsPool });
