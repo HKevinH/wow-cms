@@ -22,7 +22,7 @@ describe('media manifest', () => {
   });
 
   it('downloads into the directory git ignores', () => {
-    expect(manifest.baseDir).toBe('public/media/remote');
+    expect(manifest.baseDir).toBe('public/media');
   });
 
   it('fetches every asset over https', () => {

@@ -4,11 +4,20 @@
  *  show a zero that looks like an empty realm. */
 export interface RealmStatus {
   readonly name: string;
+  readonly realmlist: string;
   readonly online: boolean;
   readonly playersOnline: number | null;
   readonly uptimeSeconds: number | null;
+  readonly players: readonly RealmPlayer[];
   /** ISO 8601. When the platform last managed to ask. */
   readonly checkedAt: string;
+}
+
+export interface RealmPlayer {
+  readonly name: string;
+  readonly level: number | null;
+  readonly faction: 'alliance' | 'horde' | 'neutral';
+  readonly zone: string;
 }
 
 export function formatUptime(seconds: number | null): string | null {

@@ -1,78 +1,74 @@
 ---
 import PublicLayout from '../layouts/PublicLayout.astro';
 import CopyLine from '../components/CopyLine.astro';
-import { formatUptime } from '@wowcms/contracts';
+import FactionIcon from '../components/FactionIcon.astro';
 import { getSiteConfig } from '../config/site';
+import { formatUptime } from '@wowcms/contracts';
 import { fetchStatus } from '../lib/content';
 import { formatDate, useTranslations, type Locale } from '../i18n';
 
-/** Server-rendered rather than prerendered: 'is the realm up' is the one page on
- *  this site whose answer at build time is worthless. */
-interface Props {
-  locale: Locale;
-}
+interface Props { locale: Locale; }
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
-const site = getSiteConfig();
-const status = await fetchStatus();
-
-const uptime = formatUptime(status?.uptimeSeconds ?? null);
-const dash = '—';
+const { media } = getSiteConfig();
+const statuses = await fetchStatus();
+const dash = 'â€”';
 ---
 
 <PublicLayout title={t('status.title')} description={t('status.title')} locale={locale} bare>
   <div class="mx-auto max-w-3xl px-4 py-14 md:py-20">
     <h1 class="mb-10 mt-0 text-3xl uppercase tracking-[0.15em] md:text-4xl">{t('status.title')}</h1>
 
-    <div class="rounded-theme border border-border bg-surface shadow-panel">
-      <div class="flex flex-wrap items-center gap-4 border-b border-border px-6 py-5">
-        <span
-          aria-hidden="true"
-          class:list={[
-            'h-3 w-3 rounded-full',
-            status === null ? 'bg-muted' : status.online ? 'bg-success' : 'bg-danger',
-          ]}
-        >
-        </span>
-        <span class="font-display text-lg uppercase tracking-widest text-text">
-          {status?.name ?? site.name}
-        </span>
-        <span
-          class:list={[
-            'ml-auto text-sm font-semibold uppercase tracking-widest',
-            status === null ? 'text-muted' : status.online ? 'text-success' : 'text-danger',
-          ]}
-        >
-          {status === null ? t('status.unknown') : status.online ? t('status.online') : t('status.offline')}
-        </span>
-      </div>
+    {statuses.length === 0 && <p class="rounded-theme border border-border bg-surface px-6 py-5 text-muted">{t('status.unknown')}</p>}
+    {statuses.map((status) => (
+      <section class="mb-8 rounded-theme border border-border bg-surface shadow-panel">
+        <div class="flex flex-wrap items-center gap-4 border-b border-border px-6 py-5">
+          <span aria-hidden="true" class:list={['h-3 w-3 rounded-full', status.online ? 'bg-success' : 'bg-danger']}></span>
+          <span class="font-display text-lg uppercase tracking-widest text-text">{status.name}</span>
+          <span class:list={['ml-auto text-sm font-semibold uppercase tracking-widest', status.online ? 'text-success' : 'text-danger']}>
+            {status.online ? t('status.online') : t('status.offline')}
+          </span>
+        </div>
 
-      <dl class="m-0 grid gap-px bg-border sm:grid-cols-3">
-        <div class="bg-surface px-6 py-5">
-          <dt class="m-0 text-xs uppercase tracking-widest text-muted">{t('status.players')}</dt>
-          <dd class="m-0 mt-1 font-display text-2xl text-highlight">
-            {status?.playersOnline ?? dash}
-          </dd>
-        </div>
-        <div class="bg-surface px-6 py-5">
-          <dt class="m-0 text-xs uppercase tracking-widest text-muted">{t('status.uptime')}</dt>
-          <dd class="m-0 mt-1 font-display text-2xl text-highlight">{uptime ?? dash}</dd>
-        </div>
-        <div class="bg-surface px-6 py-5">
-          <dt class="m-0 text-xs uppercase tracking-widest text-muted">{t('status.updated')}</dt>
-          <dd class="m-0 mt-1 text-sm text-muted">
-            {status ? formatDate(status.checkedAt, locale) : dash}
-          </dd>
-        </div>
-      </dl>
-    </div>
+        <dl class="m-0 grid gap-px bg-border sm:grid-cols-3">
+          <div class="bg-surface px-6 py-5">
+            <dt class="m-0 text-xs uppercase tracking-widest text-muted">{t('status.players')}</dt>
+            <dd class="m-0 mt-1 font-display text-2xl text-highlight">{status.playersOnline}</dd>
+          </div>
+          <div class="bg-surface px-6 py-5">
+            <dt class="m-0 text-xs uppercase tracking-widest text-muted">{t('status.uptime')}</dt>
+            <dd class="m-0 mt-1 font-display text-2xl text-highlight">{formatUptime(status.uptimeSeconds) ?? dash}</dd>
+          </div>
+          <div class="bg-surface px-6 py-5">
+            <dt class="m-0 text-xs uppercase tracking-widest text-muted">{t('status.updated')}</dt>
+            <dd class="m-0 mt-1 text-sm text-muted">{formatDate(status.checkedAt, locale)}</dd>
+          </div>
+        </dl>
 
-    <h2 class="mb-4 mt-12 text-lg uppercase tracking-wider text-highlight">{t('status.realm')}</h2>
-    <CopyLine
-      value={site.realmlist}
-      copyLabel={t('connect.copy')}
-      copiedLabel={t('connect.copied')}
-    />
+        <div class="border-t border-border">
+          <div class="border-b border-border px-6 py-5">
+            <h2 class="m-0 text-lg uppercase tracking-wider text-highlight">{t('status.players')}</h2>
+          </div>
+          {status.players.length ? (
+            <ul class="m-0 grid list-none gap-px bg-border p-0 sm:grid-cols-2">
+              {status.players.map((player) => (
+                <li class="flex items-center gap-3 bg-surface px-6 py-4">
+                  <FactionIcon faction={player.faction} label={t(`status.${player.faction}`)} src={player.faction === 'alliance' ? media.factions.alliance : player.faction === 'horde' ? media.factions.horde : undefined} />
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center justify-between gap-3">
+                      <span class="font-display text-text">{player.name}</span>
+                      {player.level !== null && <span class="text-sm text-muted">{t('status.level')} {player.level}</span>}
+                    </div>
+                    <span class="text-sm text-muted">{player.zone}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : <p class="m-0 px-6 py-5 text-muted">{t('status.noPlayers')}</p>}
+        </div>
+        {status.realmlist && <div class="border-t border-border px-6 py-5"><CopyLine value={status.realmlist} copyLabel={t('connect.copy')} copiedLabel={t('connect.copied')} /></div>}
+      </section>
+    ))}
   </div>
 </PublicLayout>

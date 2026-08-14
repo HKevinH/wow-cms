@@ -6,7 +6,5 @@ dist/
 *.d.ts
 *.tsbuildinfo
 
-# Artwork pulled by 'pnpm media:fetch'. Declared in apps/web/media.manifest.json
-# and never committed: it belongs to whoever made it, and this repository is meant
-# to be cloned by other people.
-apps/web/public/media/remote/
+# Theme and CMS media are versioned locally so runtime rendering does not depend
+# on an external asset host.

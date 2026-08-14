@@ -58,11 +58,11 @@ export async function listPostSlugs(locale: ContentLocale): Promise<string[]> {
 
 /** Realm status. There is no sample fallback: inventing 'online' would be a lie
  *  about the one fact a visitor came to check. */
-export async function fetchStatus(): Promise<RealmStatus | null> {
+export async function fetchStatus(): Promise<RealmStatus[]> {
   try {
-    return await apiFetch<RealmStatus>('/api/m/status');
+    return await apiFetch<RealmStatus[]>('/api/m/status');
   } catch (error) {
     warn('realm status', error);
-    return null;
-  }
+  return [];
+}
 }

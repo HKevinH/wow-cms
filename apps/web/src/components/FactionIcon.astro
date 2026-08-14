@@ -1,0 +1,22 @@
+---
+interface Props {
+  faction: 'alliance' | 'horde' | 'neutral';
+  label: string;
+  src?: string;
+}
+
+const { faction, label, src } = Astro.props;
+const tone = faction === 'horde' ? 'text-red-300 border-red-400/60 bg-red-950/40' : faction === 'alliance' ? 'text-blue-300 border-blue-400/60 bg-blue-950/40' : 'text-amber-200 border-amber-400/60 bg-amber-950/40';
+---
+
+<span class:list={['grid h-9 w-9 shrink-0 place-items-center rounded-full border', tone]} title={label} aria-label={label}>
+  {src ? (
+    <img src={src} alt="" aria-hidden="true" class="h-7 w-7 object-contain" />
+  ) : faction === 'horde' ? (
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6 fill-current"><path d="M12 2 4 6v5c0 5.1 3.4 9.7 8 11 4.6-1.3 8-5.9 8-11V6l-8-4Zm0 3.1 5 2.5v3.2c0 3.4-2 6.7-5 8-3-1.3-5-4.6-5-8V7.6l5-2.5Zm-1 3.4h2v3h-2v-3Zm-2.6 1.1 1.5 1.4-1.4 1.4-1.5-1.4 1.4-1.4Zm7.2 0 1.4 1.4-1.5 1.4-1.4-1.4 1.5-1.4Z" /></svg>
+  ) : faction === 'alliance' ? (
+    <svg viewBox="0 0 24 24" aria-hidden="true" class="h-6 w-6 fill-current"><path d="M12 2 4 5v6c0 5 3.1 8.8 8 11 4.9-2.2 8-6 8-11V5l-8-3Zm0 3 5 1.9v4.1c0 3.3-1.9 6-5 7.8-3.1-1.8-5-4.5-5-7.8V6.9L12 5Zm-1 2v3H8v2h3v3h2v-3h3v-2h-3V7h-2Z" /></svg>
+  ) : (
+    <span aria-hidden="true" class="font-serif text-lg">✦</span>
+  )}
+</span>

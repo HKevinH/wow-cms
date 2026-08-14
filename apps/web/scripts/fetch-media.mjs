@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-/** Downloads the artwork declared in media.manifest.json into a directory git
- *  ignores. Artwork is fetched rather than committed so the repository stays
- *  distributable: the manifest records what this install points at, and any
- *  clone reproduces the set with one command.
+/** Downloads the artwork declared in media.manifest.json into public/media.
+ *  The downloaded files are committed locally so runtime rendering remains
+ *  available if an upstream asset is removed.
  *
  *  Usage: node scripts/fetch-media.mjs [--force]
  *  Already-downloaded files are skipped unless --force is passed. */
