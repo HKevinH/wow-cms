@@ -1,6 +1,5 @@
 import type { ContentLocale, NewsPage, NewsPost, NewsSummary, RealmStatus } from '@wowcms/contracts';
 import { apiFetch } from './api';
-import { samplePosts } from './sample-content';
 
 /** Reading content, with the API as the source and sample data as the floor.
  *
@@ -12,7 +11,7 @@ import { samplePosts } from './sample-content';
 
 function warn(what: string, error: unknown): void {
   const reason = error instanceof Error ? error.message : String(error);
-  console.warn(`[content] ${what} unavailable, using sample content: ${reason}`);
+  console.warn(`[content] ${what} unavailable: ${reason}`);
 }
 
 function toSummary(post: NewsPost): NewsSummary {
@@ -27,20 +26,20 @@ export async function fetchNews(locale: ContentLocale, limit = 6): Promise<NewsS
     );
     // An empty database is not an error, but it is also not something to render
     // as an empty page on a site nobody has written for yet.
-    if (page.items.length > 0) return [...page.items];
+    return [...page.items];
   } catch (error) {
     warn('news', error);
   }
 
-  return samplePosts(locale).slice(0, limit).map(toSummary);
+  return [];
 }
 
 export async function fetchPost(slug: string, locale: ContentLocale): Promise<NewsPost | null> {
   try {
-    return await apiFetch<NewsPost>(`/api/m/content/news/${encodeURIComponent(slug)}`);
+    return await apiFetch<NewsPost>(`/api/m/content/news/${encodeURIComponent(slug)}?locale=${locale}`);
   } catch (error) {
     warn(`post '${slug}'`, error);
-    return samplePosts(locale).find((post) => post.slug === slug) ?? null;
+    return null;
   }
 }
 
@@ -49,12 +48,12 @@ export async function fetchPost(slug: string, locale: ContentLocale): Promise<Ne
 export async function listPostSlugs(locale: ContentLocale): Promise<string[]> {
   try {
     const page = await apiFetch<NewsPage>(`/api/m/content/news?locale=${locale}&limit=500`);
-    if (page.items.length > 0) return page.items.map((item) => item.slug);
+    return page.items.map((item) => item.slug);
   } catch (error) {
     warn('news index', error);
   }
 
-  return samplePosts(locale).map((post) => post.slug);
+  return [];
 }
 
 /** Realm status. There is no sample fallback: inventing 'online' would be a lie
