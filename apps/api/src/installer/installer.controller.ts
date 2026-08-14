@@ -14,6 +14,8 @@ import { createCmsPool, runMigrations } from '@wowcms/platform-db';
 interface InstallBody {
   mysqlAdminUrl?: string;
   authDatabase?: string;
+  charactersDatabase?: string;
+  worldDatabase?: string;
   cmsDatabase?: string;
   webOrigin?: string;
   siteName?: string;
@@ -35,11 +37,16 @@ export class InstallerController {
     }
     const adminUrl = body.mysqlAdminUrl?.trim();
     const authDatabase = body.authDatabase?.trim() || 'auth';
+    const charactersDatabase = body.charactersDatabase?.trim() || 'characters';
+    const worldDatabase = body.worldDatabase?.trim() || 'world';
     const cmsDatabase = body.cmsDatabase?.trim() || 'wowcms';
     if (!adminUrl) throw new BadRequestException('MySQL connection URL is required.');
-    assertDatabaseName(authDatabase); assertDatabaseName(cmsDatabase);
+    assertDatabaseName(authDatabase); assertDatabaseName(charactersDatabase); assertDatabaseName(worldDatabase); assertDatabaseName(cmsDatabase);
     const authUrl = databaseUrl(adminUrl, authDatabase);
     const cmsUrl = databaseUrl(adminUrl, cmsDatabase);
+
+    const gameChecks = await checkGameDatabases(adminUrl, authDatabase, charactersDatabase, worldDatabase);
+    if (!gameChecks.every((check) => check.ok)) throw new BadRequestException({ message: 'Emulator database verification failed.', checks: gameChecks });
 
     const admin = await createConnection(adminUrl);
     try {
@@ -57,11 +64,22 @@ export class InstallerController {
         const modules = [authModule, accountsModule, contentModule, mediaModule, settingsModule];
         await runMigrations(cmsConnection as never, modules);
         await saveInitialSettings(cmsPool, body);
-        await writeEnvironment({ authUrl, cmsUrl, webOrigin: body.webOrigin });
+        await writeEnvironment({ authUrl, cmsUrl, webOrigin: body.webOrigin, charactersUrl: databaseUrl(adminUrl, charactersDatabase), worldUrl: databaseUrl(adminUrl, worldDatabase) });
       } finally { cmsConnection.release(); await cmsPool.end(); }
       void adapter;
     } finally { connection.release(); await emulator.end(); }
     return { ok: true, restartRequired: true };
+  }
+
+  @Post('check')
+  async check(@Body() body: InstallBody) {
+    const adminUrl = body.mysqlAdminUrl?.trim();
+    if (!adminUrl) throw new BadRequestException('MySQL connection URL is required.');
+    const auth = body.authDatabase?.trim() || 'auth';
+    const characters = body.charactersDatabase?.trim() || 'characters';
+    const world = body.worldDatabase?.trim() || 'world';
+    assertDatabaseName(auth); assertDatabaseName(characters); assertDatabaseName(world);
+    return { checks: await checkGameDatabases(adminUrl, auth, characters, world) };
   }
 
   private async isInstalled(): Promise<boolean> {
@@ -97,12 +115,40 @@ async function saveInitialSettings(pool: ReturnType<typeof createCmsPool>, body:
   await pool.execute('INSERT INTO settings_value (namespace, setting_key, setting_value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)', ['system', 'installationComplete', 'true']);
 }
 
-async function writeEnvironment(values: { authUrl: string; cmsUrl: string; webOrigin?: string }): Promise<void> {
+async function checkGameDatabases(adminUrl: string, authDatabase: string, charactersDatabase: string, worldDatabase: string) {
+  const entries = [
+    ['auth', authDatabase],
+    ['characters', charactersDatabase],
+    ['world', worldDatabase],
+  ] as const;
+  const checks: { name: string; database: string; ok: boolean; tables: number; adapter?: string; score?: number; error?: string }[] = [];
+  for (const [name, database] of entries) {
+    try {
+      const connection = await createConnection(databaseUrl(adminUrl, database));
+      try {
+        const [rows] = await connection.query<RowDataPacket[]>('SELECT COUNT(*) AS total FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?', [database]);
+        const result = { name, database, ok: true, tables: Number(rows[0]?.total ?? 0) };
+        if (name === 'auth') {
+          const probe = await buildSchemaProbe(connection, database);
+          const selected = selectAdapter([trinity548Adapter], probe);
+          checks.push({ ...result, adapter: selected.adapter.id, score: selected.score });
+        } else checks.push(result);
+      } finally { await connection.end(); }
+    } catch (error) {
+      checks.push({ name, database, ok: false, tables: 0, error: error instanceof Error ? error.message : String(error) });
+    }
+  }
+  return checks;
+}
+
+async function writeEnvironment(values: { authUrl: string; cmsUrl: string; webOrigin?: string; charactersUrl: string; worldUrl: string }): Promise<void> {
   const file = resolve(process.env.INIT_CWD ?? process.cwd(), '.env');
   await mkdir(dirname(file), { recursive: true });
   const content = [
     `WOWCMS_AUTH_URL=${values.authUrl}`,
     `WOWCMS_DATABASE_URL=${values.cmsUrl}`,
+    `WOWCMS_CHARACTERS_URL=${values.charactersUrl}`,
+    `WOWCMS_WORLD_URL=${values.worldUrl}`,
     `WOWCMS_WEB_ORIGIN=${values.webOrigin?.trim() || 'http://localhost:4321'}`,
     'WOWCMS_INSTALLER_MODE=false',
     'PORT=3001',
