@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import 'dotenv/config';
 import cookie from '@fastify/cookie';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -52,7 +53,19 @@ async function bootstrap(): Promise<void> {
   const cmsPool = createCmsPool(CMS_URL);
 
   const { enabled, disabled } = resolveModules([authModule, accountsModule, contentModule, mediaModule, settingsModule], report.capabilities);
-  const cmsConnection = await cmsPool.getConnection();
+  let cmsConnection;
+  try {
+    cmsConnection = await cmsPool.getConnection();
+  } catch (error) {
+    if ((error as { code?: string }).code === 'ER_BAD_DB_ERROR') {
+      console.warn(`CMS database is missing (${CMS_URL}). Starting the web installer.`);
+      await pool.end();
+      await cmsPool.end();
+      await bootstrapInstaller();
+      return;
+    }
+    throw error;
+  }
   // mysql2 exposes mutable parameter arrays while the runner intentionally accepts
   // readonly values for testability; the runtime methods are structurally identical.
   try { await runMigrations(cmsConnection as never, enabled); } finally { cmsConnection.release(); }

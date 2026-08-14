@@ -21,6 +21,7 @@
     "@wowcms/module-settings": "workspace:*",
     "@wowcms/module-sdk": "workspace:*",
     "@wowcms/platform-db": "workspace:*",
+    "dotenv": "^16.4.7",
     "mysql2": "^3.11.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
