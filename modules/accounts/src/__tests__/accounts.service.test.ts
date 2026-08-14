@@ -4,7 +4,7 @@ import {
   InvalidCredentialsError,
   UsernameTakenError,
   type AccountGateway,
-} from './accounts.service';
+} from '../accounts.service';
 
 function makeService(overrides: Partial<AccountGateway> = {}) {
   const gateway: AccountGateway = {

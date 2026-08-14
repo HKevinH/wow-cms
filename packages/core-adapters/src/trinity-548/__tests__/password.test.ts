@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import { normalizeForHash, shaPassHash } from './password';
+import { normalizeForHash, shaPassHash } from '../password';
 
 describe('normalizeForHash', () => {
   it('uppercases ASCII letters', () => {

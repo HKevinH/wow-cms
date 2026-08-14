@@ -6,7 +6,7 @@ import {
   PostNotFoundError,
   SlugTakenError,
   type PostRepository,
-} from './content.service';
+} from '../content.service';
 
 class FakeRepository implements PostRepository {
   posts: NewsPost[] = [];

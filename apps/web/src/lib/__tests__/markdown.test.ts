@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { plainExcerpt, renderMarkdown } from './markdown';
+import { plainExcerpt, renderMarkdown } from '../markdown';
 
 describe('renderMarkdown', () => {
   it('renders the markdown a post body actually uses', () => {

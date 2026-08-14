@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { AccountsController } from './accounts.controller';
-import { InvalidCredentialsError, UsernameTakenError } from './accounts.service';
+import { AccountsController } from '../accounts.controller';
+import { InvalidCredentialsError, UsernameTakenError } from '../accounts.service';
 
 describe('AccountsController', () => {
   it('returns the new account id on registration', async () => {

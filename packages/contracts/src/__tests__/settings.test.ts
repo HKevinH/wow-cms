@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SITE_SETTINGS_SCHEMA, applySchema, type SettingRecord } from './settings';
+import { SITE_SETTINGS_SCHEMA, applySchema, type SettingRecord } from '../settings';
 
 const record = (namespace: string, key: string, value: string): SettingRecord => ({
   namespace,

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { getSiteConfig, remoteAssetPaths } from './site';
+import { getSiteConfig, remoteAssetPaths } from '../site';
 
 interface Manifest {
   baseDir: string;
@@ -8,7 +8,7 @@ interface Manifest {
 }
 
 const manifest: Manifest = JSON.parse(
-  readFileSync(new URL('../../media.manifest.json', import.meta.url), 'utf8'),
+  readFileSync(new URL('../../../media.manifest.json', import.meta.url), 'utf8'),
 );
 
 describe('media manifest', () => {

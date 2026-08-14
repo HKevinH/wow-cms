@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { createEmulatorPool } from '../pool';
-import { buildSchemaProbe } from '../schema-probe';
-import { trinity548Adapter, createAccount, verifyPassword } from './adapter';
+import { createEmulatorPool } from '../../pool';
+import { buildSchemaProbe } from '../../schema-probe';
+import { trinity548Adapter, createAccount, verifyPassword } from '../adapter';
 
 const url = process.env.WOWCMS_TEST_AUTH_URL;
 

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { apiFetch, ApiError } from './api';
+import { apiFetch, ApiError } from '../api';
 
 describe('apiFetch', () => {
   it('returns the parsed body on success', async () => {

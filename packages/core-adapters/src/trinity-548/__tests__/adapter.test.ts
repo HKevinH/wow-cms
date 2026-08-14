@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { SchemaProbe } from '../schema-probe';
-import { trinity548Adapter } from './adapter';
+import { SchemaProbe } from '../../schema-probe';
+import { trinity548Adapter } from '../adapter';
 
 const fullSchema = new SchemaProbe([
   { table: 'account', column: 'id', type: 'int' },

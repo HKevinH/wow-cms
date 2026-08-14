@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Migration, WowCmsModule } from '@wowcms/module-sdk';
-import { runMigrations, type MigrationConnection } from './migrations';
+import { runMigrations, type MigrationConnection } from '../migrations';
 
 /** A connection that records what it was asked to do and answers the ledger
  *  query from a set the test controls. Enough to check ordering, idempotency and

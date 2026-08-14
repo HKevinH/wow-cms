@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { WILDCARD_PERMISSION, hasPermission, type Viewer } from './auth';
+import { WILDCARD_PERMISSION, hasPermission, type Viewer } from '../auth';
 
 const viewer = (permissions: string[]): Viewer => ({
   accountId: 1,

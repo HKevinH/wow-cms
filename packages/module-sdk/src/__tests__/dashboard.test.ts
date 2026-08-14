@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { WILDCARD_PERMISSION, type Viewer } from '@wowcms/contracts';
-import { declaredPermissions, resolveDashboard } from './dashboard';
-import type { WowCmsModule } from './module';
+import { declaredPermissions, resolveDashboard } from '../dashboard';
+import type { WowCmsModule } from '../module';
 
 const content: WowCmsModule = {
   id: 'content',

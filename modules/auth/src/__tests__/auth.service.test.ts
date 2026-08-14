@@ -8,7 +8,7 @@ import {
   type AuthStore,
   type CredentialChecker,
   type StoredSession,
-} from './auth.service';
+} from '../auth.service';
 
 class FakeStore implements AuthStore {
   sessions = new Map<string, StoredSession>();

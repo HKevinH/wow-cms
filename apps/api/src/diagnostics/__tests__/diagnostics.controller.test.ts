@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DiagnosticsController } from './diagnostics.controller';
+import { DiagnosticsController } from '../diagnostics.controller';
 import type { AdapterReport } from '@wowcms/contracts';
 
 const report: AdapterReport = {

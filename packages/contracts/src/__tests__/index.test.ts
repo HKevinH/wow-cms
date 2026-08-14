@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ADAPTER_CAPABILITIES, CONTRACTS_VERSION } from './index';
+import { ADAPTER_CAPABILITIES, CONTRACTS_VERSION } from '../index';
 
 describe('contracts package', () => {
   it('exposes a version the API and clients can compare against', () => {

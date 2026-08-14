@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { resolveModules } from './registry';
-import type { WowCmsModule } from './module';
+import { resolveModules } from '../registry';
+import type { WowCmsModule } from '../module';
 
 const accounts: WowCmsModule = { id: 'accounts', version: '1.0.0' };
 const armory: WowCmsModule = {

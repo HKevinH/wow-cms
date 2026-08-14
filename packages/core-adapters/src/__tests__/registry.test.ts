@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { SchemaProbe } from './schema-probe';
-import { applyFieldMapOverrides, type FieldMap } from './field-map';
-import { selectAdapter, type CoreAdapter } from './registry';
+import { SchemaProbe } from '../schema-probe';
+import { applyFieldMapOverrides, type FieldMap } from '../field-map';
+import { selectAdapter, type CoreAdapter } from '../registry';
 
 const baseMap: FieldMap = {
   accounts: {

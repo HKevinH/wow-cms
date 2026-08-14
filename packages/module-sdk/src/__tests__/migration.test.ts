@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assertValidHistory, type Migration } from './migration';
+import { assertValidHistory, type Migration } from '../migration';
 
 const migration = (version: number, name = `step-${version}`): Migration => ({
   version,

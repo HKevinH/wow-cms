@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { es } from './es';
-import { en } from './en';
+import { es } from '../es';
+import { en } from '../en';
 import {
   DEFAULT_LOCALE,
   LOCALES,
@@ -10,7 +10,7 @@ import {
   postPath,
   translatePath,
   useTranslations,
-} from './index';
+} from '../index';
 
 describe('dictionaries', () => {
   it('translates every key in every locale', () => {

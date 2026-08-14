@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SchemaProbe } from './schema-probe';
+import { SchemaProbe } from '../schema-probe';
 
 describe('SchemaProbe', () => {
   const probe = new SchemaProbe([
