@@ -1,5 +1,5 @@
 import type { Pool, RowDataPacket } from 'mysql2/promise';
-import type { AccountId, AccountSummary, NewAccount } from '@wowcms/contracts';
+import type { AccountBalances, AccountId, AccountSummary, NewAccount } from '@wowcms/contracts';
 import { createAccount, quoteIdentifier, verifyPassword, type FieldMap } from '@wowcms/core-adapters';
 import type { AccountGateway } from './accounts.service';
 
@@ -31,6 +31,16 @@ export class AdapterAccountGateway implements AccountGateway {
 
     const found = (rows as Array<{ id: number }>)[0];
     return found ? found.id : null;
+  }
+
+  async balances(accountId: AccountId): Promise<AccountBalances> {
+    const table = quoteIdentifier(this.map.accounts.table);
+    const id = quoteIdentifier(this.map.accounts.id);
+    const [rows] = await this.pool.execute<RowDataPacket[]>(
+      `SELECT dp, vp FROM ${table} WHERE ${id} = ? LIMIT 1`, [accountId],
+    );
+    const row = rows[0] as { dp?: number; vp?: number } | undefined;
+    return { donorPoints: Number(row?.dp ?? 0), votePoints: Number(row?.vp ?? 0) };
   }
 
   async list(query: { search?: string; field?: 'username' | 'email'; limit: number; offset: number }): Promise<{ items: AccountSummary[]; total: number }> {

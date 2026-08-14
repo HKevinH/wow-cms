@@ -32,8 +32,14 @@ const canAdminister = hasPermission(viewer, 'admin.access');
     }
   </div>
 
+  <section class="mt-6 grid gap-4 sm:grid-cols-2" aria-label={t('nav.account')}>
+    <article class="rounded-theme border border-accent/30 bg-surface p-5"><p class="m-0 text-xs uppercase tracking-widest text-muted">{t('account.donorPoints')}</p><p id="donor-points" class="m-0 mt-2 font-display text-3xl text-accent">—</p></article>
+    <article class="rounded-theme border border-accent/30 bg-surface p-5"><p class="m-0 text-xs uppercase tracking-widest text-muted">{t('account.votePoints')}</p><p id="vote-points" class="m-0 mt-2 font-display text-3xl text-accent">—</p></article>
+  </section>
+
   <div class="mt-8 flex flex-wrap gap-4">
     {canAdminister && <Button href="/admin">{t('nav.admin')}</Button>}
+    <Button href={`${path('store', locale)}#recharge`} variant="purchase">{t('account.recharge')}</Button>
     <Button href={path('connect', locale)} variant="outline">{t('nav.connect')}</Button>
     <button
       id="logout"
@@ -50,6 +56,13 @@ const canAdminister = hasPermission(viewer, 'admin.access');
   import { apiFetch } from '../lib/api';
 
   const button = document.querySelector<HTMLButtonElement>('#logout');
+  const donor = document.querySelector<HTMLElement>('#donor-points');
+  const vote = document.querySelector<HTMLElement>('#vote-points');
+
+  void apiFetch<{ donorPoints: number; votePoints: number }>('/api/m/accounts/me/balances').then((balances) => {
+    if (donor) donor.textContent = balances.donorPoints.toLocaleString();
+    if (vote) vote.textContent = balances.votePoints.toLocaleString();
+  });
 
   button?.addEventListener('click', async () => {
     button.disabled = true;

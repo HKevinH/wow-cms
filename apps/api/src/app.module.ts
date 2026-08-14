@@ -9,6 +9,7 @@ import { ContentApiModule } from '@wowcms/module-content';
 import { MediaApiModule } from '@wowcms/module-media';
 import { SettingsApiModule } from '@wowcms/module-settings';
 import { RealmsApiModule } from '@wowcms/module-realms';
+import { StoreApiModule } from '@wowcms/module-store';
 import { DiagnosticsController } from './diagnostics/diagnostics.controller';
 import { PLATFORM_REPORTER } from './platform/platform.service';
 import { InstallerController } from './installer/installer.controller';
@@ -34,6 +35,7 @@ export class AppModule {
     const media = MediaApiModule.register(options.cmsPool);
     const settings = SettingsApiModule.register(options.cmsPool);
     const realms = RealmsApiModule.register(options.cmsPool);
+    const store = StoreApiModule.register(options.cmsPool);
 
     return {
       module: AppModule,
@@ -44,6 +46,7 @@ export class AppModule {
         media,
         settings,
         realms,
+        store,
         // Every module is namespaced by its id, so two modules can never collide.
         RouterModule.register([
           { path: 'api/m/accounts', module: AccountsApiModule },
@@ -52,6 +55,7 @@ export class AppModule {
           { path: 'api/m/media', module: MediaApiModule },
           { path: 'api/m/settings', module: SettingsApiModule },
           { path: 'api/m/realms', module: RealmsApiModule },
+          { path: 'api/m/store', module: StoreApiModule },
         ]),
       ],
       controllers: [DiagnosticsController, InstallerController, StatusController],

@@ -66,3 +66,8 @@ export interface AccountSummary {
   readonly email: string;
   readonly roles: readonly string[];
 }
+
+export interface AccountBalances {
+  readonly donorPoints: number;
+  readonly votePoints: number;
+}

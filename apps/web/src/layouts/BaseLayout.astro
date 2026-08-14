@@ -55,8 +55,8 @@ const publicApiBase = import.meta.env.PUBLIC_API_BASE ?? "http://localhost:3001"
 
     <slot />
 
-    <script is:inline>
-      const apiBase = {JSON.stringify(publicApiBase)};
+    <script define:vars={{ publicApiBase }}>
+      const apiBase = publicApiBase;
       const path = window.location.pathname;
       const isInstallPath = path === "/install" || path === "/install/";
       const readStatus = () =>

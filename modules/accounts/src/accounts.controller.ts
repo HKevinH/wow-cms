@@ -6,10 +6,11 @@ import {
   Inject,
   Query,
   Post,
+  Req,
   UnauthorizedException,
 } from '@nestjs/common';
 import type { AccountId, NewAccount } from '@wowcms/contracts';
-import { RequirePermission } from '@wowcms/module-auth';
+import { RequirePermission, type RequestWithViewer } from '@wowcms/module-auth';
 import { AccountsService, InvalidCredentialsError, UsernameTakenError } from './accounts.service';
 
 export const ACCOUNTS_SERVICE = Symbol('ACCOUNTS_SERVICE');
@@ -24,6 +25,12 @@ export class AccountsController {
   @RequirePermission('accounts.manage')
   list(@Query() query: { search?: string; field?: 'username' | 'email'; limit?: string; offset?: string }) {
     return this.accounts.list({ ...query, limit: Number(query.limit), offset: Number(query.offset) });
+  }
+
+  @Get('me/balances')
+  async balances(@Req() request: RequestWithViewer) {
+    if (!request.viewer) throw new UnauthorizedException('Log in to continue.');
+    return this.accounts.balances(request.viewer.accountId);
   }
 
   @Post('register')

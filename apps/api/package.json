@@ -20,6 +20,7 @@
     "@wowcms/module-media": "workspace:*",
     "@wowcms/module-realms": "workspace:*",
     "@wowcms/module-settings": "workspace:*",
+    "@wowcms/module-store": "workspace:*",
     "@wowcms/module-sdk": "workspace:*",
     "@wowcms/platform-db": "workspace:*",
     "dotenv": "^16.4.7",

@@ -28,6 +28,7 @@ export const ROUTES = {
   register: { es: '/registro', en: '/en/register' },
   login: { es: '/entrar', en: '/en/login' },
   account: { es: '/cuenta', en: '/en/account' },
+  store: { es: '/tienda', en: '/en/store' },
 } as const satisfies Record<string, Record<Locale, string>>;
 
 export type RouteName = keyof typeof ROUTES;

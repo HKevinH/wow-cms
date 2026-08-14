@@ -51,7 +51,7 @@ const dash = 'â€”';
             <h2 class="m-0 text-lg uppercase tracking-wider text-highlight">{t('status.players')}</h2>
           </div>
           {status.players.length ? (
-            <ul class="m-0 grid list-none gap-px bg-border p-0 sm:grid-cols-2">
+            <ul class="m-0 grid w-full list-none gap-px bg-border p-0">
               {status.players.map((player) => (
                 <li class="flex items-center gap-3 bg-surface px-6 py-4">
                   <FactionIcon faction={player.faction} label={t(`status.${player.faction}`)} src={player.faction === 'alliance' ? media.factions.alliance : player.faction === 'horde' ? media.factions.horde : undefined} />

@@ -32,3 +32,4 @@ export * from './media';
 export * from './settings';
 export * from './auth';
 export * from './status';
+export * from './store';

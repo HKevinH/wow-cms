@@ -1,0 +1,33 @@
+---
+import PublicLayout from '../layouts/PublicLayout.astro';
+import { apiFetch } from '../lib/api';
+import { useTranslations, type Locale } from '../i18n';
+import type { StoreItem, StoreConfig } from '@wowcms/contracts';
+type Package = { id: number; name: string; description: string; amount: number; currency: string; donorPoints: number; votePoints: number };
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+let config: StoreConfig = { enabled: false, currency: 'USD' };
+let items: StoreItem[] = [];
+let packages: Package[] = [];
+try { config = await apiFetch<StoreConfig>('/api/m/store/config'); if (config.enabled) items = await apiFetch<StoreItem[]>('/api/m/store/items'); } catch { /* API may be starting */ }
+try { if (config.enabled) packages = await apiFetch<Package[]>('/api/m/store/packages'); } catch { /* optional until configured */ }
+const selectedId = Astro.url.searchParams.get('item');
+const selected = selectedId ? items.find((item) => String(item.id) === selectedId) : undefined;
+const prefix = locale === 'es' ? '/tienda' : '/en/store';
+---
+<PublicLayout title={t('store.title')} locale={locale}>
+  {!config.enabled ? <p class="rounded-theme border border-border bg-surface p-6 text-muted">{t('store.disabled')}</p> : <>
+    {packages.length > 0 && <section class="mb-8"><h2 class="mb-4 text-2xl">{t('account.recharge')}</h2><div class="grid gap-4 sm:grid-cols-3">{packages.map((pack) => <article class="rounded-theme border border-border bg-surface p-5"><h3 class="m-0 text-lg text-highlight">{pack.name}</h3><p class="text-sm text-muted">{pack.description}</p><p class="text-accent">{pack.amount} {pack.currency}</p><p class="m-0 text-xs uppercase tracking-widest text-muted">{pack.donorPoints} donor · {pack.votePoints} vote</p></article>)}</div></section>}
+    {selected && <article class="mb-6 rounded-theme border border-accent/40 bg-surface p-6"><h2 class="m-0 text-2xl text-highlight">{selected.name}</h2><p class="text-muted">{selected.description}</p><dl class="grid gap-2 sm:grid-cols-2">{Object.entries(selected.details).map(([key, value]) => <div><dt class="text-xs uppercase tracking-widest text-muted">{key}</dt><dd class="m-0 text-text">{String(value)}</dd></div>)}</dl></article>}
+    <section id="recharge" class="grid gap-5 sm:grid-cols-2">
+      {items.length === 0 ? <p class="text-muted">{t('store.empty')}</p> : items.map((item) => (
+        <a href={`${prefix}?item=${item.id}`} class="rounded-theme border border-border bg-surface p-5 no-underline hover:border-accent">
+          <div class="flex gap-4">
+            {item.iconUrl && <img src={item.iconUrl} alt="" class="h-16 w-16 object-contain" />}
+            <div><h2 class="m-0 text-xl text-highlight">{item.name}</h2><p class="mt-2 text-sm text-muted">{item.description}</p><p class="text-xs uppercase tracking-widest text-accent">{item.priceDonorPoints} {t('store.points')}</p></div>
+          </div>
+        </a>
+      ))}
+    </section>
+  </>}
+</PublicLayout>

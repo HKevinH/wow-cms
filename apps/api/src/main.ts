@@ -17,6 +17,7 @@ import { contentModule } from '@wowcms/module-content';
 import { mediaModule } from '@wowcms/module-media';
 import { settingsModule } from '@wowcms/module-settings';
 import { realmsModule } from '@wowcms/module-realms';
+import { storeModule } from '@wowcms/module-store';
 import { createCmsPool, runMigrations } from '@wowcms/platform-db';
 import { AppModule } from './app.module';
 
@@ -53,7 +54,7 @@ async function bootstrap(): Promise<void> {
   const { pool, fieldMap, report } = await detect();
   const cmsPool = createCmsPool(CMS_URL);
 
-  const { enabled, disabled } = resolveModules([authModule, accountsModule, contentModule, mediaModule, settingsModule, realmsModule], report.capabilities);
+  const { enabled, disabled } = resolveModules([authModule, accountsModule, contentModule, mediaModule, settingsModule, realmsModule, storeModule], report.capabilities);
   let cmsConnection;
   try {
     cmsConnection = await cmsPool.getConnection();

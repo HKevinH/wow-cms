@@ -1,0 +1,22 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import { getViewer, requirePermission } from '../../lib/session';
+export const prerender = false;
+const denied = requirePermission(Astro, await getViewer(Astro), 'store.manage');
+if (denied) return denied;
+---
+<DashboardLayout title="Store">
+  <div class="grid gap-6 lg:grid-cols-2">
+    <form id="store-config" class="grid gap-4 rounded-theme border border-border bg-surface p-6"><h2 class="m-0 text-lg">Store configuration</h2><label class="flex items-center gap-3"><input name="enabled" type="checkbox" /> Enable store</label><label class="grid gap-1">Currency<input name="currency" value="USD" class="rounded border p-2" /></label><button class="rounded bg-accent px-4 py-2">Save</button></form>
+    <form id="payment" class="grid gap-4 rounded-theme border border-border bg-surface p-6"><h2 class="m-0 text-lg">Payment method</h2><input name="name" required placeholder="Name" class="rounded border p-2" /><input name="checkoutUrl" placeholder="Checkout URL" class="rounded border p-2" /><textarea name="description" placeholder="Description" class="rounded border p-2"></textarea><button class="rounded bg-accent px-4 py-2">Add payment method</button></form>
+  </div>
+  <form id="item" class="mt-6 grid gap-4 rounded-theme border border-border bg-surface p-6"><h2 class="m-0 text-lg">Game item catalog</h2><div class="grid gap-4 md:grid-cols-2"><input name="itemId" required type="number" placeholder="Game item ID" class="rounded border p-2" /><input name="name" required placeholder="Item name" class="rounded border p-2" /><input name="iconUrl" placeholder="Icon URL" class="rounded border p-2" /><input name="priceDonorPoints" type="number" placeholder="Donor points" class="rounded border p-2" /></div><textarea name="description" placeholder="Description and inspection notes" class="rounded border p-2"></textarea><button class="w-fit rounded bg-accent px-4 py-2">Publish item</button></form>
+</DashboardLayout>
+<script>
+  import { apiFetch } from '../../lib/api';
+  const config = document.querySelector<HTMLFormElement>('#store-config'); const payment = document.querySelector<HTMLFormElement>('#payment'); const item = document.querySelector<HTMLFormElement>('#item');
+  void apiFetch<{ enabled: boolean; currency: string }>('/api/m/store/config').then((v) => { const enabled = config?.elements.namedItem('enabled') as HTMLInputElement | null; const currency = config?.elements.namedItem('currency') as HTMLInputElement | null; if (enabled) enabled.checked = v.enabled; if (currency) currency.value = v.currency; });
+  config?.addEventListener('submit', async (e) => { e.preventDefault(); await apiFetch('/api/m/store/admin/config', { method: 'PUT', body: JSON.stringify({ enabled: (config.elements.namedItem('enabled') as HTMLInputElement).checked, currency: (config.elements.namedItem('currency') as HTMLInputElement).value }) }); });
+  payment?.addEventListener('submit', async (e) => { e.preventDefault(); await apiFetch('/api/m/store/admin/payment-methods', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(payment))) }); });
+  item?.addEventListener('submit', async (e) => { e.preventDefault(); await apiFetch('/api/m/store/admin/items', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(item))) }); });
+</script>
