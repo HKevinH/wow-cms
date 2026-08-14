@@ -24,6 +24,7 @@ interface InstallBody {
   theme?: string;
   authPort?: string;
   worldPort?: string;
+  soapPort?: string;
   storeUrl?: string;
   reinstall?: boolean | string;
 }
@@ -109,6 +110,7 @@ async function saveInitialSettings(pool: ReturnType<typeof createCmsPool>, body:
     theme: body.theme?.trim() || 'pandaria',
     authPort: body.authPort?.trim() || '3724',
     worldPort: body.worldPort?.trim() || '8085',
+    soapPort: body.soapPort?.trim() || '7878',
     storeUrl: body.storeUrl?.trim() || 'http://localhost:8787',
   };
   for (const [key, value] of Object.entries(values)) await pool.execute('INSERT INTO settings_value (namespace, setting_key, setting_value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)', ['site', key, value]);

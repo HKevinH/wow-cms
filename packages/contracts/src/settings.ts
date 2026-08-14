@@ -37,11 +37,13 @@ export interface SiteSettings {
   readonly realmlist: string;
   readonly authPort: string;
   readonly worldPort: string;
+  readonly soapPort: string;
   readonly storeUrl: string;
   readonly logoUrl: string;
   readonly heroVideoUrl: string;
   readonly heroPosterUrl: string;
   readonly discordUrl: string;
+  readonly rulesUrl: string;
   readonly contactUrl: string;
 }
 
@@ -61,6 +63,7 @@ export const SITE_SETTINGS_SCHEMA: SettingsSchema = {
     },
     { key: 'authPort', label: 'Authserver port', type: 'number', defaultValue: '3724' },
     { key: 'worldPort', label: 'Worldserver port', type: 'number', defaultValue: '8085' },
+    { key: 'soapPort', label: 'SOAP port', type: 'number', description: 'Worldserver SOAP port for administrative commands.', defaultValue: '7878' },
     { key: 'storeUrl', label: 'Store URL', type: 'url', defaultValue: 'http://localhost:8787' },
     {
       key: 'realmlist',
@@ -73,6 +76,7 @@ export const SITE_SETTINGS_SCHEMA: SettingsSchema = {
     { key: 'heroVideoUrl', label: 'Hero video', type: 'media', defaultValue: '' },
     { key: 'heroPosterUrl', label: 'Hero poster', type: 'media', defaultValue: '' },
     { key: 'discordUrl', label: 'Discord invite', type: 'url', defaultValue: '' },
+    { key: 'rulesUrl', label: 'Rules link', type: 'url', defaultValue: '' },
     { key: 'contactUrl', label: 'Contact link', type: 'url', defaultValue: '' },
   ],
 };

@@ -16,6 +16,7 @@ export interface SiteConfig {
   readonly realmlist: string;
   readonly authPort: number;
   readonly worldPort: number;
+  readonly soapPort: number;
   readonly storeUrl?: string;
   readonly locales: readonly Locale[];
   readonly defaultLocale: Locale;
@@ -49,8 +50,6 @@ const REMOTE = '/media/remote';
  *  Environment variables win where they are set, so a deployment can rename the
  *  realm without a rebuild of this file. */
 export function getSiteConfig(): SiteConfig {
-  const env = import.meta.env;
-
   return {
     name: 'Reino de Pandaria',
     description: 'A private World of Warcraft realm.',
@@ -58,6 +57,7 @@ export function getSiteConfig(): SiteConfig {
     realmlist: 'set realmlist logon.mi-reino.com',
     authPort: 3724,
     worldPort: 8085,
+    soapPort: 7878,
     storeUrl: 'http://localhost:8787',
     locales: LOCALES,
     defaultLocale: DEFAULT_LOCALE,
@@ -91,9 +91,9 @@ export function getSiteConfig(): SiteConfig {
     },
 
     links: {
-      discord: env.PUBLIC_DISCORD_URL,
-      rules: env.PUBLIC_RULES_URL,
-      contact: env.PUBLIC_CONTACT_URL,
+      discord: undefined,
+      rules: undefined,
+      contact: undefined,
     },
   };
 }

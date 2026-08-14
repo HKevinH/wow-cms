@@ -66,6 +66,11 @@ const theme = resolveTheme();
           document.querySelectorAll('[data-site-description]').forEach((node) => { node.textContent = config.values.serverDescription; });
           document.querySelectorAll('[data-site-meta]').forEach((node) => { node.textContent = `${config.values.expansion} · Auth ${config.values.authPort} · World ${config.values.worldPort}`; });
           document.querySelectorAll('[data-site-store]').forEach((node) => { node.setAttribute('href', config.values.storeUrl); });
+          document.querySelectorAll('[data-site-link]').forEach((node) => {
+            const key = node.getAttribute('data-site-link');
+            const value = key === 'discord' ? config.values.discordUrl : key === 'rules' ? config.values.rulesUrl : config.values.contactUrl;
+            if (value) { node.setAttribute('href', value); node.removeAttribute('hidden'); } else { node.setAttribute('hidden', ''); }
+          });
           document.documentElement.dataset.siteTheme = config.values.theme;
         })
         .catch(() => { if (path !== '/install') window.location.replace('/install'); });

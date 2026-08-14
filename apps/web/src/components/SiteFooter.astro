@@ -22,11 +22,6 @@ const sections: { route: RouteName; label: string }[] = [
   { route: 'register', label: t('nav.register') },
 ];
 
-const external = [
-  { href: site.links.discord, label: 'Discord' },
-  { href: site.links.rules, label: t('footer.rules') },
-  { href: site.links.contact, label: t('footer.contact') },
-].filter((link): link is { href: string; label: string } => Boolean(link.href));
 ---
 
 <footer class="band mt-auto border-t border-border bg-footer-band">
@@ -71,27 +66,15 @@ const external = [
       </ul>
     </nav>
 
-    {
-      external.length > 0 && (
-        <nav aria-label={t('footer.legal')}>
+    <nav aria-label={t('footer.legal')}>
           <h2 class="mb-3 mt-0 text-xs uppercase tracking-[0.2em] text-highlight">
             {t('footer.legal')}
           </h2>
           <ul class="m-0 flex list-none flex-col gap-2 p-0">
-            {external.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  rel="noopener noreferrer"
-                  class="text-sm text-muted no-underline hover:text-accent"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
+            <li><a data-site-link="discord" hidden href="#" rel="noopener noreferrer" class="text-sm text-muted no-underline hover:text-accent">Discord</a></li>
+            <li><a data-site-link="rules" hidden href="#" rel="noopener noreferrer" class="text-sm text-muted no-underline hover:text-accent">{t('footer.rules')}</a></li>
+            <li><a data-site-link="contact" hidden href="#" rel="noopener noreferrer" class="text-sm text-muted no-underline hover:text-accent">{t('footer.contact')}</a></li>
           </ul>
         </nav>
-      )
-    }
   </div>
 </footer>
