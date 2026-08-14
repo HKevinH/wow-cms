@@ -1,4 +1,7 @@
 ---
 import StoreView from '../../views/StoreView.astro';
+// Server-rendered for the same reason as the Spanish route: the page reads
+// `?item=` to decide which item to inspect.
+export const prerender = false;
 ---
 <StoreView locale="en" />

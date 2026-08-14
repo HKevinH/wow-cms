@@ -1,4 +1,8 @@
 ---
 import StoreView from '../views/StoreView.astro';
+// Server-rendered because the page reads `?item=` to decide which item to
+// inspect, and a prerendered page is built without a query string: the detail
+// panel would never open, whichever item the visitor picked.
+export const prerender = false;
 ---
 <StoreView locale="es" />
