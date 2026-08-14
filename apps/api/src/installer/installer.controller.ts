@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, ForbiddenException, Post } from '@nestjs/common';
 import { createConnection } from 'mysql2/promise';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -28,6 +28,9 @@ interface InstallBody {
 export class InstallerController {
   @Post()
   async install(@Body() body: InstallBody): Promise<{ ok: true; restartRequired: true }> {
+    if (process.env.PUBLIC_INSTALLATION_COMPLETE === 'true') {
+      throw new ForbiddenException('The installation is already complete.');
+    }
     const adminUrl = body.mysqlAdminUrl?.trim();
     const authDatabase = body.authDatabase?.trim() || 'auth';
     const cmsDatabase = body.cmsDatabase?.trim() || 'wowcms';

@@ -49,7 +49,7 @@ export class AppModule {
           { path: 'api/m/settings', module: SettingsApiModule },
         ]),
       ],
-      controllers: [DiagnosticsController],
+      controllers: [DiagnosticsController, InstallerController],
       providers: [{ provide: PLATFORM_REPORTER, useValue: { report: () => options.report } }],
     };
   }
