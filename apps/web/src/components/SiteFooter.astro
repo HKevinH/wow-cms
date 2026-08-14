@@ -47,6 +47,9 @@ const external = [
       <p class="m-0 mt-3 max-w-md text-sm leading-relaxed text-muted">
         {t('footer.notAffiliated')}
       </p>
+      <p class="m-0 mt-3 text-sm text-muted">{site.description}</p>
+      <p class="m-0 mt-1 text-xs text-muted">{site.expansion} · Auth {site.authPort} · World {site.worldPort}</p>
+      {site.storeUrl && <a class="mt-3 inline-block text-sm text-accent" href={site.storeUrl}>Store</a>}
       <p class="m-0 mt-3 text-sm text-muted">© {year} {site.name}</p>
     </div>
 

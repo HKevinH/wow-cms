@@ -12,6 +12,11 @@ export const prerender = false;
       <label>CMS database<input name="cmsDatabase" value="wowcms" required class="mt-1 w-full rounded border p-2" /></label>
       <label>Web origin<input name="webOrigin" value="http://localhost:4321" required class="mt-1 w-full rounded border p-2" /></label>
       <label>Site name<input name="siteName" value="WoW CMS" required class="mt-1 w-full rounded border p-2" /></label>
+      <label>Server description<textarea name="serverDescription" class="mt-1 w-full rounded border p-2">A private World of Warcraft realm.</textarea></label>
+      <label>Expansion<input name="expansion" value="Mists of Pandaria 5.4.8" required class="mt-1 w-full rounded border p-2" /></label>
+      <label>Theme<select name="theme" class="mt-1 w-full rounded border p-2"><option value="pandaria">Pandaria</option><option value="blizzard">Blizzard</option><option value="minimal">Minimal</option></select></label>
+      <div class="grid gap-4 sm:grid-cols-2"><label>Authserver port<input name="authPort" type="number" value="3724" required class="mt-1 w-full rounded border p-2" /></label><label>Worldserver port<input name="worldPort" type="number" value="8085" required class="mt-1 w-full rounded border p-2" /></label></div>
+      <label>Store URL<input name="storeUrl" type="url" value="http://localhost:8787" class="mt-1 w-full rounded border p-2" /></label>
       <button class="rounded bg-accent px-4 py-2">Install</button>
       <p id="result" role="status"></p>
     </form>

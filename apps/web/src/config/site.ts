@@ -11,7 +11,12 @@ export interface MediaRef {
 
 export interface SiteConfig {
   readonly name: string;
+  readonly description: string;
+  readonly expansion: string;
   readonly realmlist: string;
+  readonly authPort: number;
+  readonly worldPort: number;
+  readonly storeUrl?: string;
   readonly locales: readonly Locale[];
   readonly defaultLocale: Locale;
   readonly media: {
@@ -48,7 +53,12 @@ export function getSiteConfig(): SiteConfig {
 
   return {
     name: env.PUBLIC_SITE_NAME ?? 'Reino de Pandaria',
+    description: env.PUBLIC_SERVER_DESCRIPTION ?? 'A private World of Warcraft realm.',
+    expansion: env.PUBLIC_EXPANSION ?? 'Mists of Pandaria 5.4.8',
     realmlist: env.PUBLIC_REALMLIST ?? 'set realmlist logon.mi-reino.com',
+    authPort: Number(env.PUBLIC_AUTH_PORT ?? 3724),
+    worldPort: Number(env.PUBLIC_WORLD_PORT ?? 8085),
+    storeUrl: env.PUBLIC_STORE_URL,
     locales: LOCALES,
     defaultLocale: DEFAULT_LOCALE,
 

@@ -16,6 +16,12 @@ interface InstallBody {
   cmsDatabase?: string;
   webOrigin?: string;
   siteName?: string;
+  serverDescription?: string;
+  expansion?: string;
+  theme?: string;
+  authPort?: string;
+  worldPort?: string;
+  storeUrl?: string;
 }
 
 @Controller('api/install')
@@ -45,7 +51,7 @@ export class InstallerController {
       try {
         const modules = [authModule, accountsModule, contentModule, mediaModule, settingsModule];
         await runMigrations(cmsConnection as never, modules);
-        await writeEnvironment({ authUrl, cmsUrl, webOrigin: body.webOrigin, siteName: body.siteName });
+        await writeEnvironment({ authUrl, cmsUrl, webOrigin: body.webOrigin, siteName: body.siteName, serverDescription: body.serverDescription, expansion: body.expansion, theme: body.theme, authPort: body.authPort, worldPort: body.worldPort, storeUrl: body.storeUrl });
       } finally { cmsConnection.release(); await cmsPool.end(); }
       void adapter;
     } finally { connection.release(); await emulator.end(); }
@@ -61,7 +67,7 @@ function databaseUrl(adminUrl: string, database: string): string {
   const url = new URL(adminUrl); url.pathname = `/${database}`; return url.toString();
 }
 
-async function writeEnvironment(values: { authUrl: string; cmsUrl: string; webOrigin?: string; siteName?: string }): Promise<void> {
+async function writeEnvironment(values: { authUrl: string; cmsUrl: string; webOrigin?: string; siteName?: string; serverDescription?: string; expansion?: string; theme?: string; authPort?: string; worldPort?: string; storeUrl?: string }): Promise<void> {
   const file = resolve(process.env.INIT_CWD ?? process.cwd(), '.env');
   await mkdir(dirname(file), { recursive: true });
   const content = [
@@ -70,6 +76,13 @@ async function writeEnvironment(values: { authUrl: string; cmsUrl: string; webOr
     `WOWCMS_WEB_ORIGIN=${values.webOrigin?.trim() || 'http://localhost:4321'}`,
     'WOWCMS_INSTALLER_MODE=false',
     `PUBLIC_SITE_NAME=${values.siteName?.trim() || 'WoW CMS'}`,
+    `PUBLIC_SERVER_DESCRIPTION=${values.serverDescription?.trim() || 'A private World of Warcraft realm.'}`,
+    `PUBLIC_EXPANSION=${values.expansion?.trim() || 'Mists of Pandaria 5.4.8'}`,
+    `PUBLIC_THEME=${values.theme?.trim() || 'pandaria'}`,
+    `PUBLIC_AUTH_PORT=${values.authPort?.trim() || '3724'}`,
+    `PUBLIC_WORLD_PORT=${values.worldPort?.trim() || '8085'}`,
+    `PUBLIC_STORE_URL=${values.storeUrl?.trim() || 'http://localhost:8787'}`,
+    'PUBLIC_INSTALLATION_COMPLETE=true',
     'PORT=3001',
     'PUBLIC_API_BASE=http://localhost:3001',
   ].join('\n') + '\n';

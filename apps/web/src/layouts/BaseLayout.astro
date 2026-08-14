@@ -54,6 +54,12 @@ const theme = resolveTheme();
 
     <slot />
 
+    <script is:inline define:vars={{ installationComplete: import.meta.env.PUBLIC_INSTALLATION_COMPLETE === 'true' }}>
+      if (!installationComplete && window.location.pathname !== '/install') {
+        window.location.replace('/install');
+      }
+    </script>
+
     <script is:inline>
       // Applied before paint so a reader who chose light or dark never sees the
       // other one flash first.
