@@ -5,6 +5,7 @@ dist/
 *.js
 *.d.ts
 *.tsbuildinfo
+__pycache__/
 
 # Theme and CMS media are versioned locally so runtime rendering does not depend
 # on an external asset host.
