@@ -6,21 +6,66 @@ export const prerender = false;
   <main class="mx-auto max-w-2xl px-4 py-14">
     <h1 id="install-title">Install WoW CMS</h1>
     <p id="install-description" class="text-muted">Complete each step to configure the realm.</p>
-    <ol class="my-6 grid grid-cols-4 gap-2 text-center text-xs uppercase tracking-wider text-muted"><li class="rounded border border-accent p-2">1. MySQL</li><li class="rounded border border-accent p-2">2. Emulator</li><li class="rounded border border-accent p-2">3. Realm</li><li class="rounded border border-accent p-2">4. Finish</li></ol>
+    <ol id="steps" class="my-6 grid grid-cols-4 gap-2 text-center text-xs uppercase tracking-wider text-muted">
+      <li data-step-label="1" class="rounded border border-accent p-2">1. MySQL</li>
+      <li data-step-label="2" class="rounded border p-2">2. Emulator</li>
+      <li data-step-label="3" class="rounded border p-2">3. Realm</li>
+      <li data-step-label="4" class="rounded border p-2">4. Finish</li>
+    </ol>
     <form id="installer" class="rounded-theme border border-border bg-surface p-6">
-      <fieldset class="grid gap-4"><legend class="mb-3 text-xl">1. MySQL connection</legend><label>MySQL admin URL<input name="mysqlAdminUrl" value="mysql://root:root@127.0.0.1:3306" required class="mt-1 w-full rounded border p-2" /></label><label>CMS database<input name="cmsDatabase" value="wowcms" required class="mt-1 w-full rounded border p-2" /></label></fieldset>
-      <fieldset class="mt-8 grid gap-4 border-t border-border pt-6"><legend class="mb-3 text-xl">2. Emulator databases</legend><p class="text-sm text-muted">Estas bases pertenecen a TrinityCore. El instalador no las crea ni modifica; solo verifica conexión y schema.</p><label>Auth database<input name="authDatabase" value="auth" required class="mt-1 w-full rounded border p-2" /></label><label>Characters database<input name="charactersDatabase" value="characters" required class="mt-1 w-full rounded border p-2" /></label><label>World database<input name="worldDatabase" value="world" required class="mt-1 w-full rounded border p-2" /></label><button id="check-databases" type="button" class="rounded border border-accent px-4 py-2">Verify databases</button><pre id="checks" class="whitespace-pre-wrap text-sm"></pre></fieldset>
-      <fieldset class="mt-8 grid gap-4 border-t border-border pt-6"><legend class="mb-3 text-xl">3. Realm identity</legend><label>Site name<input name="siteName" value="WoW CMS" required class="mt-1 w-full rounded border p-2" /></label><label>Server description<textarea name="serverDescription" class="mt-1 w-full rounded border p-2">A private World of Warcraft realm.</textarea></label><label>Expansion<input name="expansion" value="Mists of Pandaria 5.4.8" required class="mt-1 w-full rounded border p-2" /></label><label>Theme<select name="theme" class="mt-1 w-full rounded border p-2"><option value="pandaria">Pandaria</option><option value="blizzard">Blizzard</option><option value="minimal">Minimal</option></select></label><div class="grid gap-4 sm:grid-cols-2"><label>Authserver port<input name="authPort" type="number" value="3724" required class="mt-1 w-full rounded border p-2" /></label><label>Worldserver port<input name="worldPort" type="number" value="8085" required class="mt-1 w-full rounded border p-2" /></label></div><label>Store URL<input name="storeUrl" type="url" value="http://localhost:8787" class="mt-1 w-full rounded border p-2" /></label></fieldset>
-      <fieldset class="mt-8 grid gap-4 border-t border-border pt-6"><legend class="mb-3 text-xl">4. Finish</legend><p>Se creará la base CMS, se ejecutarán sus migraciones y se guardará la configuración pública en la base de datos.</p><input id="reinstall" type="hidden" name="reinstall" value="false" /><button id="install-submit" class="rounded bg-accent px-4 py-2">Install</button></fieldset>
+      <fieldset data-step="1" class="grid gap-4">
+        <legend class="mb-3 text-xl">1. MySQL connection</legend>
+        <label>MySQL admin URL<input name="mysqlAdminUrl" value="mysql://root:root@127.0.0.1:3306" required class="mt-1 w-full rounded border p-2" /></label>
+        <label>CMS database<input name="cmsDatabase" value="wowcms" required class="mt-1 w-full rounded border p-2" /></label>
+      </fieldset>
+      <fieldset data-step="2" hidden class="grid gap-4">
+        <legend class="mb-3 text-xl">2. Emulator databases</legend>
+        <p class="text-sm text-muted">Estas bases pertenecen a TrinityCore. El instalador no las crea ni modifica; solo verifica conexión y schema.</p>
+        <label>Auth database<input name="authDatabase" value="auth" required class="mt-1 w-full rounded border p-2" /></label>
+        <label>Characters database<input name="charactersDatabase" value="characters" required class="mt-1 w-full rounded border p-2" /></label>
+        <label>World database<input name="worldDatabase" value="world" required class="mt-1 w-full rounded border p-2" /></label>
+        <button id="check-databases" type="button" class="rounded border border-accent px-4 py-2">Verify databases</button>
+        <pre id="checks" class="whitespace-pre-wrap text-sm"></pre>
+      </fieldset>
+      <fieldset data-step="3" hidden class="grid gap-4">
+        <legend class="mb-3 text-xl">3. Realm identity</legend>
+        <label>Site name<input name="siteName" value="WoW CMS" required class="mt-1 w-full rounded border p-2" /></label>
+        <label>Server description<textarea name="serverDescription" class="mt-1 w-full rounded border p-2">A private World of Warcraft realm.</textarea></label>
+        <label>Expansion<input name="expansion" value="Mists of Pandaria 5.4.8" required class="mt-1 w-full rounded border p-2" /></label>
+        <label>Theme<select name="theme" class="mt-1 w-full rounded border p-2"><option value="pandaria">Pandaria</option><option value="blizzard">Blizzard</option><option value="minimal">Minimal</option></select></label>
+        <div class="grid gap-4 sm:grid-cols-2"><label>Authserver port<input name="authPort" type="number" value="3724" required class="mt-1 w-full rounded border p-2" /></label><label>Worldserver port<input name="worldPort" type="number" value="8085" required class="mt-1 w-full rounded border p-2" /></label></div>
+        <label>Store URL<input name="storeUrl" type="url" value="http://localhost:8787" class="mt-1 w-full rounded border p-2" /></label>
+      </fieldset>
+      <fieldset data-step="4" hidden class="grid gap-4">
+        <legend class="mb-3 text-xl">4. Finish</legend>
+        <p>Se creará la base CMS, se ejecutarán sus migraciones y se guardará la configuración pública en la base de datos.</p>
+        <input id="reinstall" type="hidden" name="reinstall" value="false" />
+        <button id="install-submit" class="rounded bg-accent px-4 py-2">Install</button>
+      </fieldset>
+      <div class="mt-6 flex justify-between"><button id="previous" type="button" class="rounded border px-4 py-2" hidden>Previous</button><button id="next" type="button" class="rounded bg-accent px-4 py-2">Next</button></div>
       <p id="result" role="status" class="mt-4"></p>
     </form>
   </main>
 </BaseLayout>
 <script>
   import { apiFetch } from '../lib/api';
-  const form = document.querySelector<HTMLFormElement>('#installer'); const result = document.querySelector<HTMLElement>('#result'); const checks = document.querySelector<HTMLElement>('#checks'); const submit = document.querySelector<HTMLButtonElement>('#install-submit'); const reinstall = document.querySelector<HTMLInputElement>('#reinstall'); let verified = false;
+  const form = document.querySelector<HTMLFormElement>('#installer');
+  const result = document.querySelector<HTMLElement>('#result');
+  const checks = document.querySelector<HTMLElement>('#checks');
+  const submit = document.querySelector<HTMLButtonElement>('#install-submit');
+  const reinstall = document.querySelector<HTMLInputElement>('#reinstall');
+  const next = document.querySelector<HTMLButtonElement>('#next');
+  const previous = document.querySelector<HTMLButtonElement>('#previous');
+  const fields = [...document.querySelectorAll<HTMLElement>('[data-step]')];
+  const labels = [...document.querySelectorAll<HTMLElement>('[data-step-label]')];
+  let current = 1;
+  let verified = false;
+  const show = () => { fields.forEach((field) => { field.hidden = Number(field.dataset.step) !== current; }); if (previous) previous.hidden = current === 1; if (next) next.hidden = current === 4; labels.forEach((label) => label.classList.toggle('border-accent', Number(label.dataset.stepLabel) === current)); };
   const verify = async () => { if (!form || !checks) return false; checks.textContent = 'Verifying…'; try { const data = await apiFetch<{checks:{name:string;database:string;ok:boolean;tables:number;adapter?:string;score?:number;error?:string}[]}>('/api/install/check', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) }); checks.textContent = data.checks.map((c) => `${c.name}: ${c.ok ? `OK (${c.tables} tables${c.adapter ? `, ${c.adapter} ${c.score}` : ''})` : `ERROR ${c.error}`}`).join('\n'); verified = data.checks.every((c) => c.ok); return verified; } catch (error) { checks.textContent = error instanceof Error ? error.message : 'Verification failed.'; verified = false; return false; } };
   document.querySelector<HTMLButtonElement>('#check-databases')?.addEventListener('click', () => { void verify(); });
+  next?.addEventListener('click', async () => { if (current === 2 && !(await verify())) return; current = Math.min(4, current + 1); show(); });
+  previous?.addEventListener('click', () => { current = Math.max(1, current - 1); show(); });
   fetch(`${import.meta.env.PUBLIC_API_BASE ?? 'http://localhost:3001'}/api/m/settings/public`).then((response) => response.ok ? response.json() : null).then((status) => { if (status?.installed) { if (submit) submit.textContent = 'Reinstall'; if (reinstall) reinstall.value = 'true'; const title = document.querySelector('#install-title'); if (title) title.textContent = 'Reinstall WoW CMS'; } }).catch(() => undefined);
   form?.addEventListener('submit', async (event) => { event.preventDefault(); if (!form || !result) return; if (!verified && !(await verify())) return; result.textContent = 'Installing…'; try { await apiFetch('/api/install', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) }); result.textContent = 'Complete. Restart the web and API services.'; } catch (error) { result.textContent = error instanceof Error ? error.message : 'Installation failed.'; } });
+  show();
 </script>
