@@ -71,7 +71,13 @@ ahead of time by `tools/model-pipeline`, which reads the client's archives and
 writes `.glb` files into `apps/web/public/models`. The site serves those as
 static files: no game data reaches production, and an item without a model —
 including every piece of body armour, which has none to begin with — keeps
-showing its 2D icon. See that package's README for how to run it.
+showing its 2D icon.
+
+That folder is **not** in git. The full catalogue is 831 MB across nearly
+eleven thousand files, so it belongs to a deploy rather than to the source:
+build it on the deploy host, or copy the folder across. A site without it
+renders normally and shows icons everywhere. See that package's README for how
+to run it.
 
 ## Themes
 

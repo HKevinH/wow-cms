@@ -9,3 +9,10 @@ __pycache__/
 
 # Theme and CMS media are versioned locally so runtime rendering does not depend
 # on an external asset host.
+
+# Item models are the exception: they are generated from the game client by
+# tools/model-pipeline and belong to a deploy, not to the source. The full
+# catalogue is 831 MB across nearly eleven thousand files, and git would carry
+# that in every clone forever. Build them on the deploy host, or copy the
+# folder across; a site without them falls back to the 2D icons.
+apps/web/public/models/
