@@ -1,5 +1,6 @@
 import { BadRequestException, Body, Controller, ForbiddenException, Post } from '@nestjs/common';
 import { createConnection } from 'mysql2/promise';
+import type { RowDataPacket } from 'mysql2/promise';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { buildSchemaProbe, createEmulatorPool, selectAdapter, trinity548Adapter } from '@wowcms/core-adapters';
@@ -28,7 +29,7 @@ interface InstallBody {
 export class InstallerController {
   @Post()
   async install(@Body() body: InstallBody): Promise<{ ok: true; restartRequired: true }> {
-    if (process.env.PUBLIC_INSTALLATION_COMPLETE === 'true') {
+    if (await this.isInstalled()) {
       throw new ForbiddenException('The installation is already complete.');
     }
     const adminUrl = body.mysqlAdminUrl?.trim();
@@ -54,11 +55,22 @@ export class InstallerController {
       try {
         const modules = [authModule, accountsModule, contentModule, mediaModule, settingsModule];
         await runMigrations(cmsConnection as never, modules);
-        await writeEnvironment({ authUrl, cmsUrl, webOrigin: body.webOrigin, siteName: body.siteName, serverDescription: body.serverDescription, expansion: body.expansion, theme: body.theme, authPort: body.authPort, worldPort: body.worldPort, storeUrl: body.storeUrl });
+        await saveInitialSettings(cmsPool, body);
+        await writeEnvironment({ authUrl, cmsUrl, webOrigin: body.webOrigin });
       } finally { cmsConnection.release(); await cmsPool.end(); }
       void adapter;
     } finally { connection.release(); await emulator.end(); }
     return { ok: true, restartRequired: true };
+  }
+
+  private async isInstalled(): Promise<boolean> {
+    const url = process.env.WOWCMS_DATABASE_URL;
+    if (!url) return false;
+    const pool = createCmsPool(url);
+    try {
+      const [rows] = await pool.query<(RowDataPacket & { setting_value: string })[]>('SELECT setting_value FROM settings_value WHERE namespace = ? AND setting_key = ?', ['system', 'installationComplete']);
+      return rows[0]?.setting_value === 'true';
+    } catch { return false; } finally { await pool.end(); }
   }
 }
 
@@ -70,7 +82,21 @@ function databaseUrl(adminUrl: string, database: string): string {
   const url = new URL(adminUrl); url.pathname = `/${database}`; return url.toString();
 }
 
-async function writeEnvironment(values: { authUrl: string; cmsUrl: string; webOrigin?: string; siteName?: string; serverDescription?: string; expansion?: string; theme?: string; authPort?: string; worldPort?: string; storeUrl?: string }): Promise<void> {
+async function saveInitialSettings(pool: ReturnType<typeof createCmsPool>, body: InstallBody): Promise<void> {
+  const values: Record<string, string> = {
+    siteName: body.siteName?.trim() || 'Reino de Pandaria',
+    serverDescription: body.serverDescription?.trim() || 'A private World of Warcraft realm.',
+    expansion: body.expansion?.trim() || 'Mists of Pandaria 5.4.8',
+    theme: body.theme?.trim() || 'pandaria',
+    authPort: body.authPort?.trim() || '3724',
+    worldPort: body.worldPort?.trim() || '8085',
+    storeUrl: body.storeUrl?.trim() || 'http://localhost:8787',
+  };
+  for (const [key, value] of Object.entries(values)) await pool.execute('INSERT INTO settings_value (namespace, setting_key, setting_value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)', ['site', key, value]);
+  await pool.execute('INSERT INTO settings_value (namespace, setting_key, setting_value) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)', ['system', 'installationComplete', 'true']);
+}
+
+async function writeEnvironment(values: { authUrl: string; cmsUrl: string; webOrigin?: string }): Promise<void> {
   const file = resolve(process.env.INIT_CWD ?? process.cwd(), '.env');
   await mkdir(dirname(file), { recursive: true });
   const content = [
@@ -78,14 +104,6 @@ async function writeEnvironment(values: { authUrl: string; cmsUrl: string; webOr
     `WOWCMS_DATABASE_URL=${values.cmsUrl}`,
     `WOWCMS_WEB_ORIGIN=${values.webOrigin?.trim() || 'http://localhost:4321'}`,
     'WOWCMS_INSTALLER_MODE=false',
-    `PUBLIC_SITE_NAME=${values.siteName?.trim() || 'WoW CMS'}`,
-    `PUBLIC_SERVER_DESCRIPTION=${values.serverDescription?.trim() || 'A private World of Warcraft realm.'}`,
-    `PUBLIC_EXPANSION=${values.expansion?.trim() || 'Mists of Pandaria 5.4.8'}`,
-    `PUBLIC_THEME=${values.theme?.trim() || 'pandaria'}`,
-    `PUBLIC_AUTH_PORT=${values.authPort?.trim() || '3724'}`,
-    `PUBLIC_WORLD_PORT=${values.worldPort?.trim() || '8085'}`,
-    `PUBLIC_STORE_URL=${values.storeUrl?.trim() || 'http://localhost:8787'}`,
-    'PUBLIC_INSTALLATION_COMPLETE=true',
     'PORT=3001',
     'PUBLIC_API_BASE=http://localhost:3001',
   ].join('\n') + '\n';

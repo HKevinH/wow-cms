@@ -31,8 +31,13 @@ export interface SettingsSchema {
  *  contracts rather than in the web app. */
 export interface SiteSettings {
   readonly siteName: string;
+  readonly serverDescription: string;
+  readonly expansion: string;
   readonly theme: string;
   readonly realmlist: string;
+  readonly authPort: string;
+  readonly worldPort: string;
+  readonly storeUrl: string;
   readonly logoUrl: string;
   readonly heroVideoUrl: string;
   readonly heroPosterUrl: string;
@@ -45,6 +50,8 @@ export const SITE_SETTINGS_SCHEMA: SettingsSchema = {
   title: 'Site',
   fields: [
     { key: 'siteName', label: 'Site name', type: 'string', defaultValue: 'Reino de Pandaria' },
+    { key: 'serverDescription', label: 'Server description', type: 'string', defaultValue: 'A private World of Warcraft realm.' },
+    { key: 'expansion', label: 'Expansion', type: 'string', defaultValue: 'Mists of Pandaria 5.4.8' },
     {
       key: 'theme',
       label: 'Theme',
@@ -52,6 +59,9 @@ export const SITE_SETTINGS_SCHEMA: SettingsSchema = {
       description: 'pandaria, blizzard or minimal.',
       defaultValue: 'pandaria',
     },
+    { key: 'authPort', label: 'Authserver port', type: 'number', defaultValue: '3724' },
+    { key: 'worldPort', label: 'Worldserver port', type: 'number', defaultValue: '8085' },
+    { key: 'storeUrl', label: 'Store URL', type: 'url', defaultValue: 'http://localhost:8787' },
     {
       key: 'realmlist',
       label: 'Realmlist line',

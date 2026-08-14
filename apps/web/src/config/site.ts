@@ -52,13 +52,13 @@ export function getSiteConfig(): SiteConfig {
   const env = import.meta.env;
 
   return {
-    name: env.PUBLIC_SITE_NAME ?? 'Reino de Pandaria',
-    description: env.PUBLIC_SERVER_DESCRIPTION ?? 'A private World of Warcraft realm.',
-    expansion: env.PUBLIC_EXPANSION ?? 'Mists of Pandaria 5.4.8',
-    realmlist: env.PUBLIC_REALMLIST ?? 'set realmlist logon.mi-reino.com',
-    authPort: Number(env.PUBLIC_AUTH_PORT ?? 3724),
-    worldPort: Number(env.PUBLIC_WORLD_PORT ?? 8085),
-    storeUrl: env.PUBLIC_STORE_URL,
+    name: 'Reino de Pandaria',
+    description: 'A private World of Warcraft realm.',
+    expansion: 'Mists of Pandaria 5.4.8',
+    realmlist: 'set realmlist logon.mi-reino.com',
+    authPort: 3724,
+    worldPort: 8085,
+    storeUrl: 'http://localhost:8787',
     locales: LOCALES,
     defaultLocale: DEFAULT_LOCALE,
 

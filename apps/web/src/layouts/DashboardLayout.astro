@@ -27,7 +27,7 @@ const { title, sections = [
 // declared paths carry none, so both sides are normalised before comparing.
 const normalise = (path: string) => path.replace(/\/$/, '') || '/';
 const current = normalise(Astro.url.pathname);
-const siteName = import.meta.env.PUBLIC_SITE_NAME ?? 'WoW CMS';
+const siteName = 'WoW CMS';
 ---
 
 <BaseLayout title={title} noindex>

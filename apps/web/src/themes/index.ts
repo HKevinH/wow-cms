@@ -9,6 +9,5 @@ export const DEFAULT_THEME: ThemeName = 'pandaria';
 /** Which theme this site runs. Read once here rather than in every layout, so
  *  there is a single place to change when it becomes a database setting. */
 export function resolveTheme(): ThemeName {
-  const configured = import.meta.env.PUBLIC_THEME;
-  return THEMES.includes(configured as ThemeName) ? (configured as ThemeName) : DEFAULT_THEME;
+  return DEFAULT_THEME;
 }
