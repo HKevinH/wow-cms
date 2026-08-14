@@ -35,7 +35,7 @@ export interface RequestWithViewer {
 @Injectable()
 export class PermissionGuard implements CanActivate {
   constructor(
-    private readonly reflector: Reflector,
+    @Inject(Reflector) private readonly reflector: Reflector,
     @Inject(AUTH_SERVICE) private readonly auth: AuthService,
   ) {}
 
