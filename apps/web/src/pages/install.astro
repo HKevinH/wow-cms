@@ -276,6 +276,7 @@ export const prerender = false;
         body: JSON.stringify(Object.fromEntries(new FormData(form))),
       });
       result.textContent = "Complete. Restart the web and API services.";
+      setTimeout(() => window.location.replace("/"), 500);
     } catch (error) {
       result.textContent =
         error instanceof Error ? error.message : "Installation failed.";

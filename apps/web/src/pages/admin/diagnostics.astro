@@ -3,7 +3,10 @@ import type { AdapterReport } from '@wowcms/contracts';
 import DashboardLayout from '../../layouts/DashboardLayout.astro';
 import Alert from '../../components/Alert.astro';
 import { apiFetch } from '../../lib/api';
+import { getViewer, requirePermission } from '../../lib/session';
 export const prerender = false;
+const denied = requirePermission(Astro, await getViewer(Astro), 'admin.access');
+if (denied) return denied;
 
 // Fetched at build time for now; it becomes a session-guarded SSR route when the
 // dashboard gains authentication.

@@ -1,6 +1,9 @@
 ---
 import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import { getViewer, requirePermission } from '../../lib/session';
 export const prerender = false;
+const denied = requirePermission(Astro, await getViewer(Astro), 'media.manage');
+if (denied) return denied;
 ---
 <DashboardLayout title="Media">
   <form id="media-form" class="grid gap-3 rounded-theme border border-border bg-surface p-6"><input name="title" placeholder="Title" required class="rounded border p-2" /><input name="url" type="url" placeholder="https://…" required class="rounded border p-2" /><button class="rounded bg-accent px-4 py-2">Register remote media</button></form>

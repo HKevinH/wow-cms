@@ -21,6 +21,7 @@ const { title, sections = [
   { path: '/admin/settings', title: 'Settings' },
   { path: '/admin/accounts', title: 'Accounts' },
   { path: '/admin/diagnostics', title: 'Diagnostics' },
+  { path: '/admin/realms', title: 'Realms' },
 ] } = Astro.props;
 
 // A static build serves /admin/diagnostics/ with a trailing slash while the
@@ -28,6 +29,9 @@ const { title, sections = [
 const normalise = (path: string) => path.replace(/\/$/, '') || '/';
 const current = normalise(Astro.url.pathname);
 const siteName = 'WoW CMS';
+const language = Astro.url.searchParams.get('lang') === 'es' ? 'es' : 'en';
+const translations: Record<string, string> = { News: 'Noticias', Media: 'Media', Settings: 'Configuración', Accounts: 'Cuentas', Diagnostics: 'Diagnóstico', Realms: 'Reinos' };
+const displayTitle = language === 'es' ? (translations[title] ?? title) : title;
 ---
 
 <BaseLayout title={title} noindex>
@@ -36,7 +40,7 @@ const siteName = 'WoW CMS';
       <a href="/" class="font-display text-sm font-bold uppercase tracking-widest text-accent no-underline">
         {siteName}
       </a>
-      <p class="mb-4 mt-6 text-xs uppercase tracking-widest text-muted">Administration</p>
+      <div class="mb-4 mt-6 flex items-center justify-between gap-2"><p class="m-0 text-xs uppercase tracking-widest text-muted">{language === 'es' ? 'Administración' : 'Administration'}</p><span class="text-xs"><a href={`${Astro.url.pathname}?lang=es`} class="text-accent">ES</a> / <a href={`${Astro.url.pathname}?lang=en`} class="text-accent">EN</a></span></div>
 
       <nav>
         <ul class="m-0 flex list-none flex-col gap-1 p-0">
@@ -48,7 +52,7 @@ const siteName = 'WoW CMS';
                   aria-current={current === normalise(section.path) ? 'page' : undefined}
                   class="block rounded-theme px-3 py-2 text-sm no-underline text-muted hover:text-accent aria-[current=page]:bg-accent aria-[current=page]:text-accent-text"
                 >
-                  {section.title}
+                  {language === 'es' ? (translations[section.title] ?? section.title) : section.title}
                 </a>
               </li>
             ))
@@ -58,7 +62,7 @@ const siteName = 'WoW CMS';
     </aside>
 
     <main class="overflow-x-auto p-6 md:p-10">
-      <h1 class="mb-6 mt-0 text-2xl">{title}</h1>
+      <h1 class="mb-6 mt-0 text-2xl">{displayTitle}</h1>
       <slot />
     </main>
   </div>

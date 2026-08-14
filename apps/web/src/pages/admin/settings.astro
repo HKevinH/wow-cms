@@ -1,6 +1,9 @@
 ---
 import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import { getViewer, requirePermission } from '../../lib/session';
 export const prerender = false;
+const denied = requirePermission(Astro, await getViewer(Astro), 'settings.manage');
+if (denied) return denied;
 ---
 <DashboardLayout title="Settings"><form id="settings-form" class="grid gap-3 rounded-theme border border-border bg-surface p-6"><div id="fields">Loading…</div><button class="rounded bg-accent px-4 py-2">Save settings</button></form></DashboardLayout>
 <script>

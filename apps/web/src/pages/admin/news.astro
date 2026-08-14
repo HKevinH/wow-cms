@@ -1,6 +1,9 @@
 ---
 import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import { getViewer, requirePermission } from '../../lib/session';
 export const prerender = false;
+const denied = requirePermission(Astro, await getViewer(Astro), 'content.manage');
+if (denied) return denied;
 ---
 <DashboardLayout title="News">
   <p class="text-muted">Create and manage published news posts.</p>

@@ -58,22 +58,28 @@ const theme = resolveTheme();
       const apiBase =
         import.meta.env.PUBLIC_API_BASE ?? "http://localhost:3001";
       const path = window.location.pathname;
-      const readConfig = () =>
-        fetch(`${apiBase}/api/m/settings/public`, {
-          credentials: "include",
-        }).then((response) =>
-          response.ok
-            ? response.json()
-            : fetch(`${apiBase}/api/install/status`).then((fallback) =>
-                fallback.ok ? fallback.json() : null,
-              ),
+      const isInstallPath = path === "/install" || path === "/install/";
+      const readStatus = () =>
+        fetch(`${apiBase}/api/install/status`, { credentials: "include" }).then(
+          (response) => (response.ok ? response.json() : null),
         );
-      readConfig()
+      readStatus()
         .then((config) => {
-          if (!config?.installed && path !== "/install") {
+          if (!config) return;
+          if (!config.installed && !isInstallPath) {
             window.location.replace("/install");
             return;
           }
+          if (config.installed && isInstallPath) {
+            window.location.replace("/");
+            return;
+          }
+          if (!config.installed) return;
+          return fetch(`${apiBase}/api/m/settings/public`, {
+            credentials: "include",
+          }).then((response) => (response.ok ? response.json() : null));
+        })
+        .then((config) => {
           if (!config?.values) return;
           document.querySelectorAll("[data-site-name]").forEach((node) => {
             node.textContent = config.values.siteName;
@@ -106,9 +112,7 @@ const theme = resolveTheme();
           });
           document.documentElement.dataset.siteTheme = config.values.theme;
         })
-        .catch(() => {
-          if (path !== "/install") window.location.replace("/install");
-        });
+        .catch(() => undefined);
     </script>
 
     <script is:inline>

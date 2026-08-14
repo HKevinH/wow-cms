@@ -1,0 +1,35 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import { getViewer, requirePermission } from '../../lib/session';
+export const prerender = false;
+const denied = requirePermission(Astro, await getViewer(Astro), 'realms.manage');
+if (denied) return denied;
+---
+<DashboardLayout title="Realms">
+  <p class="mb-6 text-muted">Configure multiple game servers. Every realm must use unique auth, world and SOAP ports.</p>
+  <form id="realm-form" class="grid gap-3 rounded-theme border border-border bg-surface p-6 md:grid-cols-2">
+    <input name="slug" placeholder="Slug (pandaria-548)" required class="rounded border p-2" />
+    <input name="name" placeholder="Realm name" required class="rounded border p-2" />
+    <input name="expansion" placeholder="Expansion" class="rounded border p-2" />
+    <input name="realmlist" placeholder="set realmlist logon.example.com" class="rounded border p-2" />
+    <input name="authDatabaseUrl" placeholder="Auth database URL" required class="rounded border p-2" />
+    <input name="charactersDatabaseUrl" placeholder="Characters database URL" required class="rounded border p-2" />
+    <input name="worldDatabaseUrl" placeholder="World database URL" required class="rounded border p-2" />
+    <input name="soapHost" value="127.0.0.1" placeholder="SOAP host" class="rounded border p-2" />
+    <input name="authPort" type="number" value="3724" placeholder="Auth port" required class="rounded border p-2" />
+    <input name="worldPort" type="number" value="8085" placeholder="World port" required class="rounded border p-2" />
+    <input name="soapPort" type="number" value="7878" placeholder="SOAP port" required class="rounded border p-2" />
+    <button class="rounded bg-accent px-4 py-2 md:col-span-2">Add realm</button>
+  </form>
+  <p id="realm-result" role="status" class="mt-4"></p>
+  <div id="realm-list" class="mt-6 grid gap-3"></div>
+</DashboardLayout>
+<script>
+  import { apiFetch } from '../../lib/api';
+  const form = document.querySelector<HTMLFormElement>('#realm-form');
+  const list = document.querySelector<HTMLElement>('#realm-list');
+  const result = document.querySelector<HTMLElement>('#realm-result');
+  const load = async () => { if (!list) return; const realms = await apiFetch<{id:number;name:string;slug:string;expansion:string;authPort:number;worldPort:number;soapPort:number;enabled:boolean}[]>('/api/m/realms'); list.innerHTML = realms.map((realm) => `<article class="rounded-theme border border-border bg-surface p-4"><h2 class="m-0 text-lg">${realm.name}</h2><p class="text-sm text-muted">${realm.slug} · ${realm.expansion}</p><p class="text-sm">Auth ${realm.authPort} · World ${realm.worldPort} · SOAP ${realm.soapPort}</p></article>`).join(''); };
+  form?.addEventListener('submit', async (event) => { event.preventDefault(); if (!form || !result) return; try { await apiFetch('/api/m/realms', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) }); result.textContent = 'Realm created.'; form.reset(); await load(); } catch (error) { result.textContent = error instanceof Error ? error.message : 'Unable to create realm.'; } });
+  void load();
+</script>
