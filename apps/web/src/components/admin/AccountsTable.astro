@@ -1,0 +1,55 @@
+---
+
+---
+
+<section class="rounded-theme border border-border bg-surface p-4 shadow-panel">
+  <div
+    class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+  >
+    <div>
+      <h2 class="m-0 text-lg">Accounts</h2><p
+        id="accounts-summary"
+        class="m-0 mt-1 text-sm text-muted"
+      >
+        Loading accounts…
+      </p>
+    </div>
+    <div class="flex flex-col gap-2 sm:flex-row">
+      <select
+        id="account-filter"
+        class="rounded border p-2"
+        aria-label="Filter field"
+        ><option value="">Username or email</option><option value="username"
+          >Username</option
+        ><option value="email">Email</option></select
+      ><input
+        id="account-search"
+        type="search"
+        placeholder="Search accounts…"
+        class="rounded border p-2"
+      />
+    </div>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full min-w-[42rem] text-left text-sm">
+      <thead
+        ><tr
+          class="border-b border-border text-xs uppercase tracking-wider text-muted"
+          ><th class="px-3 py-3">Username</th><th class="px-3 py-3">Email</th
+          ><th class="px-3 py-3">Roles</th></tr
+        ></thead
+      ><tbody id="accounts-body"></tbody>
+    </table>
+  </div>
+  <div class="mt-4 flex items-center justify-between">
+    <button
+      id="accounts-prev"
+      type="button"
+      class="rounded border px-3 py-2 text-sm">Previous</button
+    ><span id="accounts-page" class="text-sm text-muted">Page 1</span><button
+      id="accounts-next"
+      type="button"
+      class="rounded border px-3 py-2 text-sm">Next</button>
+  </div>
+  <p id="accounts-error" role="alert" class="mt-4 text-sm text-danger"></p>
+</section>

@@ -1,4 +1,4 @@
-import type { AccountId, NewAccount } from '@wowcms/contracts';
+import type { AccountId, AccountSummary, NewAccount } from '@wowcms/contracts';
 
 export class UsernameTakenError extends Error {
   constructor(username: string) {
@@ -20,6 +20,7 @@ export interface AccountGateway {
   create(input: NewAccount): Promise<AccountId>;
   verify(username: string, password: string): Promise<AccountId | null>;
   findByUsername(username: string): Promise<AccountId | null>;
+  list?(query: { search?: string; field?: 'username' | 'email'; limit: number; offset: number }): Promise<{ items: AccountSummary[]; total: number }>;
 }
 
 const MINIMUM_PASSWORD_LENGTH = 8;
@@ -45,5 +46,13 @@ export class AccountsService {
       throw new InvalidCredentialsError();
     }
     return { accountId };
+  }
+
+  async list(query: { search?: string; field?: 'username' | 'email'; limit?: number; offset?: number }) {
+    const limit = Math.min(100, Math.max(1, Number(query.limit) || 25));
+    const offset = Math.max(0, Number(query.offset) || 0);
+    if (!this.accounts.list) return { items: [], total: 0, limit, offset };
+    const page = await this.accounts.list({ search: query.search?.trim(), field: query.field, limit, offset });
+    return { ...page, limit, offset };
   }
 }

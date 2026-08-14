@@ -2,11 +2,14 @@ import {
   Body,
   ConflictException,
   Controller,
+  Get,
   Inject,
+  Query,
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
 import type { AccountId, NewAccount } from '@wowcms/contracts';
+import { RequirePermission } from '@wowcms/module-auth';
 import { AccountsService, InvalidCredentialsError, UsernameTakenError } from './accounts.service';
 
 export const ACCOUNTS_SERVICE = Symbol('ACCOUNTS_SERVICE');
@@ -16,6 +19,12 @@ export const ACCOUNTS_SERVICE = Symbol('ACCOUNTS_SERVICE');
 @Controller()
 export class AccountsController {
   constructor(@Inject(ACCOUNTS_SERVICE) private readonly accounts: AccountsService) {}
+
+  @Get()
+  @RequirePermission('accounts.manage')
+  list(@Query() query: { search?: string; field?: 'username' | 'email'; limit?: string; offset?: string }) {
+    return this.accounts.list({ ...query, limit: Number(query.limit), offset: Number(query.offset) });
+  }
 
   @Post('register')
   async register(@Body() body: NewAccount): Promise<{ accountId: AccountId }> {

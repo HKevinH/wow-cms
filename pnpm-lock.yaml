@@ -115,6 +115,9 @@ importers:
       '@wowcms/core-adapters':
         specifier: workspace:*
         version: link:../../packages/core-adapters
+      '@wowcms/module-auth':
+        specifier: workspace:*
+        version: link:../auth
       '@wowcms/module-sdk':
         specifier: workspace:*
         version: link:../../packages/module-sdk

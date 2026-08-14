@@ -8,6 +8,7 @@
     "@nestjs/common": "^10.4.0",
     "@wowcms/contracts": "workspace:*",
     "@wowcms/core-adapters": "workspace:*",
+    "@wowcms/module-auth": "workspace:*",
     "@wowcms/module-sdk": "workspace:*",
     "mysql2": "^3.11.0"
   }
